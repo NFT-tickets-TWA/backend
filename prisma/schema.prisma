@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id           Int         @id @default(autoincrement())
+  walletAdress String
+  name         String
+  roles        UserRole[]
+  WhiteList    WhiteList[]
+  events       Event[]
+}
+
+model UserRole {
+  id       Int    @id @default(autoincrement())
+  person   Person @relation(fields: [personID], references: [id])
+  personID Int
+  role     Role   @relation(fields: [roleID], references: [id])
+  roleID   Int
+}
+
+model Role {
+  id    Int        @id @default(autoincrement())
+  name  String
+  roles UserRole[]
+}
+
+enum NftStatus {
+  REGISTRED
+  IN_PROCESS
+  COMPLETED
+}
+
+model NftList {
+  id          Int       @id @default(autoincrement())
+  whiteList   WhiteList @relation(fields: [whiteListId], references: [id])
+  whiteListId Int       @unique
+  status      NftStatus @default(REGISTRED)
+}
+
+model WhiteList {
+  id       Int      @id @default(autoincrement())
+  person   Person   @relation(fields: [personID], references: [id])
+  personID Int
+  event    Event    @relation(fields: [eventID], references: [id])
+  eventID  Int
+  nftList  NftList?
+}
+
+model Event {
+  id                     Int         @id @default(autoincrement())
+  name                   String
+  type                   EventType   @default(NOT_STATED)
+  status                 EventStatus @default(CREATED)
+  urlCover               String      @unique
+  description            String?
+  creator                Person      @relation(fields: [creatorID], references: [id])
+  creatorID              Int
+  started_at             DateTime
+  finished_at            DateTime
+  location               Location    @relation(fields: [locationID], references: [id])
+  locationID             Int
+  nftPattern             String?     @unique
+  linkToTheCollection    String?     @unique
+  registeredParticipants Int         @default(0)
+  countOfRewardTokens    Int         @default(0)
+  created_at             DateTime
+  updated_at             DateTime
+  WhiteList              WhiteList[]
+}
+
+enum EventType {
+  HAKATON
+  CONFERENCE
+  MEETING
+  NOT_STATED
+}
+
+enum EventStatus {
+  CREATED
+  REGISTRATION_OPENED
+  REGISTRATION_CLOSED
+  FINISHED
+}
+
+model Location {
+  id        Int     @id @default(autoincrement())
+  addres    String?
+  room      String?
+  isOffline Boolean
+  link      String?
+  events    Event[]
+}
