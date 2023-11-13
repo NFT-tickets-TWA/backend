@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -33,17 +33,17 @@ model Role {
   roles UserRole[]
 }
 
-enum NftStatus {
-  REGISTRED
-  IN_PROCESS
-  COMPLETED
-}
+// enum NftStatus {
+//   REGISTRED
+//   IN_PROCESS
+//   COMPLETED
+// }
 
 model NftList {
   id          Int       @id @default(autoincrement())
   whiteList   WhiteList @relation(fields: [whiteListId], references: [id])
   whiteListId Int       @unique
-  status      NftStatus @default(REGISTRED)
+  status      String @default("REGISTRED")
 }
 
 model WhiteList {
@@ -58,8 +58,8 @@ model WhiteList {
 model Event {
   id                     Int         @id @default(autoincrement())
   name                   String
-  type                   EventType   @default(NOT_STATED)
-  status                 EventStatus @default(CREATED)
+  type                   String @default("NOT_STATED")
+  status                 String @default("CREATED")
   urlCover               String      @unique
   description            String?
   creator                Person      @relation(fields: [creatorID], references: [id])
@@ -77,19 +77,19 @@ model Event {
   WhiteList              WhiteList[]
 }
 
-enum EventType {
-  HAKATON
-  CONFERENCE
-  MEETING
-  NOT_STATED
-}
+// enum EventType {
+//   HAKATON
+//   CONFERENCE
+//   MEETING
+//   NOT_STATED
+// }
 
-enum EventStatus {
-  CREATED
-  REGISTRATION_OPENED
-  REGISTRATION_CLOSED
-  FINISHED
-}
+// enum EventStatus {
+//   CREATED
+//   REGISTRATION_OPENED
+//   REGISTRATION_CLOSED
+//   FINISHED
+// }
 
 model Location {
   id        Int     @id @default(autoincrement())
