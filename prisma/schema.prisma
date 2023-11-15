@@ -43,7 +43,8 @@ model NftList {
   id          Int       @id @default(autoincrement())
   whiteList   WhiteList @relation(fields: [whiteListId], references: [id])
   whiteListId Int       @unique
-  status      String @default("REGISTRED")
+  status      NftStatus @relation(fields: [statusId], references: [id])
+  statusId    Int
 }
 
 model WhiteList {
@@ -58,23 +59,44 @@ model WhiteList {
 model Event {
   id                     Int         @id @default(autoincrement())
   name                   String
-  type                   String @default("NOT_STATED")
-  status                 String @default("CREATED")
-  urlCover               String      @unique
+  type                   EventType   @relation(fields: [typeId], references: [id])
+  status                 EventStatus @relation(fields: [statusId], references: [id])
+  urlCover               String?
   description            String?
-  creator                Person      @relation(fields: [creatorID], references: [id])
   creatorID              Int
-  started_at             DateTime
-  finished_at            DateTime
-  location               Location    @relation(fields: [locationID], references: [id])
-  locationID             Int
+  started_at             DateTime    @default(now())
+  finished_at            DateTime    @default(now())
+  locationID             Int?
   nftPattern             String?     @unique
-  linkToTheCollection    String?     @unique
+  collectionAddr         String?     @unique
   registeredParticipants Int         @default(0)
-  countOfRewardTokens    Int         @default(0)
-  created_at             DateTime
-  updated_at             DateTime
+  countOfRewardTokens    Int
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @default(now())
+  typeId                 Int         @default(1)
+  statusId               Int         @default(1)
+  symbol                 String
   WhiteList              WhiteList[]
+  location               Location?   @relation(fields: [locationID], references: [id])
+  creator                Person      @relation(fields: [creatorID], references: [id])
+}
+
+model NftStatus {
+  id       Int       @id @default(autoincrement())
+  status   String
+  nftLists NftList[]
+}
+
+model EventType {
+  id     Int     @id @default(autoincrement())
+  type   String
+  events Event[]
+}
+
+model EventStatus {
+  id     Int     @id @default(autoincrement())
+  status String
+  events Event[]
 }
 
 // enum EventType {
@@ -83,7 +105,7 @@ model Event {
 //   MEETING
 //   NOT_STATED
 // }
-
+//
 // enum EventStatus {
 //   CREATED
 //   REGISTRATION_OPENED

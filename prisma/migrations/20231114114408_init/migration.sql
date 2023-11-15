@@ -42,24 +42,25 @@ CREATE TABLE "WhiteList" (
 CREATE TABLE "Event" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "urlCover" TEXT NOT NULL,
+    "urlCover" TEXT,
     "description" TEXT,
     "creatorID" INTEGER NOT NULL,
-    "started_at" DATETIME NOT NULL,
-    "finished_at" DATETIME NOT NULL,
-    "locationID" INTEGER NOT NULL,
+    "started_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "finished_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "locationID" INTEGER,
     "nftPattern" TEXT,
-    "linkToTheCollection" TEXT,
+    "collectionAddr" TEXT NOT NULL,
     "registeredParticipants" INTEGER NOT NULL DEFAULT 0,
-    "countOfRewardTokens" INTEGER NOT NULL DEFAULT 0,
-    "created_at" DATETIME NOT NULL,
-    "updated_at" DATETIME NOT NULL,
-    "typeId" INTEGER NOT NULL,
-    "statusId" INTEGER NOT NULL,
-    CONSTRAINT "Event_creatorID_fkey" FOREIGN KEY ("creatorID") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    "countOfRewardTokens" INTEGER NOT NULL,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "typeId" INTEGER NOT NULL DEFAULT 1,
+    "statusId" INTEGER NOT NULL DEFAULT 1,
+    "symbol" TEXT NOT NULL,
     CONSTRAINT "Event_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "EventType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Event_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "EventStatus" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Event_locationID_fkey" FOREIGN KEY ("locationID") REFERENCES "Location" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Event_locationID_fkey" FOREIGN KEY ("locationID") REFERENCES "Location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Event_creatorID_fkey" FOREIGN KEY ("creatorID") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -89,34 +90,11 @@ CREATE TABLE "Location" (
     "link" TEXT
 );
 
--- CreateTable
-CREATE TABLE "User" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL,
-    "name" TEXT
-);
-
--- CreateTable
-CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" INTEGER NOT NULL,
-    CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "NftList_whiteListId_key" ON "NftList"("whiteListId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Event_urlCover_key" ON "Event"("urlCover");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_nftPattern_key" ON "Event"("nftPattern");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Event_linkToTheCollection_key" ON "Event"("linkToTheCollection");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "Event_collectionAddr_key" ON "Event"("collectionAddr");
