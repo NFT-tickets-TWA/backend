@@ -20,7 +20,7 @@ let wallet = new ethers.Wallet(privKey, provider);
 export async function createInternalEvent(event: ContractEvent) {
     console.log("creating internal event");
     console.log(event)
-    if (!event.name || !event.url || !event.symbol || !event.countOfTokens) {
+    if (!event.name || !event.url || !event.symbol || event.countOfTokens==undefined) {
         // Return a response to the client
         return new Response(400, "Required data is missing");
     }
