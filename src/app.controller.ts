@@ -14,30 +14,16 @@ import {PersonService} from './person.service';
 import {Event} from '@prisma/client';
 import {Request, Response} from "express";
 import {createInternalEvent} from "./contract";
-import {ContractEvent} from "./event";
+import {ContractEvent, EventDTO, EventDTOForPrint} from "./event";
 import {error} from "@prisma/internals/dist/logger";
+import {ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 // import { Post as PostModel, User as UserModel } from '@prisma/client';
 
-type UserData = { email: string; name?: string };
-type EventData =
-    {
-        name: String;
-        typeID: Number;
-        statusId: Number;
-        urlCover: String;
-        description: String;
-        creatorID: Number;
-        started_at: Date;
-        finished_at: Date;
-        locationID?: Number;
-        nftPattern: String;
-        linkToTheCollection: String;
-        registeredParticipants: Number;//0
-        countOfRewardTokens: Number;//0
-    };
+
 
 
 @Controller('api')
+@ApiTags("API")
 export class AppController {
     constructor(
         private readonly eventService: EventService,
@@ -46,30 +32,35 @@ export class AppController {
     }
 
     @Get('events')
+    @ApiOperation({summary: "returns all events in database"})
+    @ApiOkResponse({type: EventDTOForPrint, isArray:true})
     async getEvents() {
         return this.eventService.events();
     }
 
     @Post('event')
-    async createEvent(@Body() eventData: Event, @Res() res: Response) {
+    @ApiOperation({summary: "create event contract and add it to the database"})
+    @ApiOkResponse({type:Number})
+    @ApiBadRequestResponse({type:String})
+    async createEvent(@Body() eventData: EventDTO, @Res() res: Response) {
         console.log(eventData)
         const contractEvent = new ContractEvent(eventData.name, eventData.nftPattern, eventData.symbol, eventData.countOfRewardTokens);
         this.eventService.createEvent(eventData).then((data) => {
                 createInternalEvent(contractEvent).then((response) => {
                     if (response.status == 200) {
                         this.eventService.updateCollectionAdr(data.id, response.hash).then(() => {
-                                return res.status(200).json({"id":data.id});
+                                return res.status(200).json(data.id);
                             }
                         ).catch((error) => {
-                            return res.status(500).json({"message":"impossible to update collection address"})
+                            return res.status(500).json("impossible to update collection address")
                         })
 
                     } else {
                         this.eventService.delete(data.id).then(() => {
-                                return res.status(response.status).json({"message":response.message});
+                                return res.status(response.status).json(response.message);
                             }
                         ).catch((error) => {
-                            return res.status(response.status).json({"message":response.message + "impossible to delete invalid event, please contact admin"})
+                            return res.status(response.status).json(response.message + "impossible to delete invalid event, please contact admin")
                         })
                     }
                 }).then(()=>{

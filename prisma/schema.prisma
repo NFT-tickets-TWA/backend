@@ -33,12 +33,6 @@ model Role {
   roles UserRole[]
 }
 
-// enum NftStatus {
-//   REGISTRED
-//   IN_PROCESS
-//   COMPLETED
-// }
-
 model NftList {
   id          Int       @id @default(autoincrement())
   whiteList   WhiteList @relation(fields: [whiteListId], references: [id])
@@ -64,10 +58,10 @@ model Event {
   urlCover               String?
   description            String?
   creatorID              Int
-  started_at             DateTime    @default(now())
-  finished_at            DateTime    @default(now())
+  started_at             DateTime?
+  finished_at            DateTime?
   locationID             Int?
-  nftPattern             String?     @unique
+  nftPattern             String      @unique
   collectionAddr         String?     @unique
   registeredParticipants Int         @default(0)
   countOfRewardTokens    Int
@@ -99,6 +93,15 @@ model EventStatus {
   events Event[]
 }
 
+model Location {
+  id        Int     @id @default(autoincrement())
+  addres    String?
+  room      String?
+  isOffline Boolean
+  link      String?
+  events    Event[]
+}
+
 // enum EventType {
 //   HAKATON
 //   CONFERENCE
@@ -112,12 +115,8 @@ model EventStatus {
 //   REGISTRATION_CLOSED
 //   FINISHED
 // }
-
-model Location {
-  id        Int     @id @default(autoincrement())
-  addres    String?
-  room      String?
-  isOffline Boolean
-  link      String?
-  events    Event[]
-}
+// enum NftStatus {
+//   REGISTRED
+//   IN_PROCESS
+//   COMPLETED
+// }

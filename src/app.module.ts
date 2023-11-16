@@ -10,6 +10,7 @@ import { HttpModule } from "@nestjs/axios";
 
 import {Prisma} from '@prisma/client'
 
+
 import('@adminjs/prisma').then(({Database, Resource}) => {
     import('adminjs').then(({AdminJS}) => {
         AdminJS.registerAdapter({
