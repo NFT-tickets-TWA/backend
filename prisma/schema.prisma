@@ -57,6 +57,7 @@ model Event {
   status                 EventStatus @relation(fields: [statusId], references: [id])
   urlCover               String?
   description            String?
+  SBTState               Boolean
   creatorID              Int
   started_at             DateTime?
   finished_at            DateTime?

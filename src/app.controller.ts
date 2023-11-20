@@ -44,7 +44,7 @@ export class AppController {
     @ApiBadRequestResponse({type:String})
     async createEvent(@Body() eventData: EventDTO, @Res() res: Response) {
         console.log(eventData)
-        const contractEvent = new ContractEvent(eventData.name, eventData.nftPattern, eventData.symbol, eventData.countOfRewardTokens);
+        const contractEvent = new ContractEvent(eventData.name, eventData.nftPattern, eventData.symbol, eventData.countOfRewardTokens, eventData.SBTState);
         this.eventService.createEvent(eventData).then((data) => {
                 createInternalEvent(contractEvent).then((response) => {
                     if (response.status == 200) {
@@ -68,13 +68,12 @@ export class AppController {
                 })
             }
         ).catch((err) => {
-            console.log(err.code)
-            console.log(err.message)
+            console.log(err)
             switch (err.code) {
                 case 'P2002':
                     return res.status(400).json(`Duplicate field value: ${err.meta.target}`)
                 case 'P2003':
-                    return res.status(400).json(`Invalid input data: ${err.meta.target}`)
+                    return res.status(400).json(`Foreign key constraint failed`)
                 default:
                     return res.status(500).json(`Something went wrong: ${err.message}`)
             }

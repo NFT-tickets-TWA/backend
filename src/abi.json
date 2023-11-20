@@ -129,15 +129,15 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "_status",
+        "type": "bool"
       }
     ],
     "name": "newEvent",
@@ -182,6 +182,11 @@
         "internalType": "address",
         "name": "_token",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_SBTStatus",
+        "type": "bool"
       }
     ],
     "name": "createInternalEvent",

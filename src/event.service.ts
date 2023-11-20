@@ -24,6 +24,7 @@ export class EventService {
 
 
   async createEvent(data: EventDTO): Promise<EventDTOForPrint> {
+    console.log(data)
     return this.prisma.event.create({ data });
   }
 }

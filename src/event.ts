@@ -46,6 +46,14 @@ export class EventDTOForPrint {
     id: number;
     @ApiProperty()
     name: string;
+    @ApiProperty()
+    symbol: string;
+    @ApiProperty()
+    SBTState: boolean;
+    @ApiProperty({uniqueItems:true})
+    nftPattern?: string | null;
+    @ApiProperty()
+    collectionAddr: string ;
     @ApiProperty({required:false})
     urlCover?: string | null;
     @ApiProperty({required:false})
@@ -58,10 +66,6 @@ export class EventDTOForPrint {
     finished_at?: Date;
     @ApiProperty({required:false})
     locationID?: number | null;
-    @ApiProperty({uniqueItems:true})
-    nftPattern?: string | null;
-    @ApiProperty()
-    collectionAddr: string ;
     @ApiProperty()
     registeredParticipants: number;
     @ApiProperty()
@@ -70,8 +74,6 @@ export class EventDTOForPrint {
     typeId: number;
     @ApiProperty()
     statusId: number;
-    @ApiProperty()
-    symbol: string;
 }
 
 export class EventDTO {
@@ -83,6 +85,8 @@ export class EventDTO {
     description?: string | null;
     @ApiProperty()
     creatorID: number;
+    @ApiProperty()
+    SBTState: boolean;
     @ApiProperty({required:false})
     started_at?: Date;
     @ApiProperty({required:false})
@@ -154,15 +158,17 @@ class LocationDTO {
 
 export class ContractEvent {
     name: string;
-    url: string;
+    nftPattern: string;
     symbol: string;
-    countOfTokens: number;
+    countOfRewardTokens: number;
+    SBTState: boolean;
 
-    constructor(name, url, symbol, countOfTokens) {
+    constructor(name: string, url: string, symbol: string, countOfTokens: number, SBTState: boolean) {
         this.name = name;
-        this.url = url;
+        this.nftPattern = url;
         this.symbol = symbol;
-        this.countOfTokens = countOfTokens;
+        this.countOfRewardTokens = countOfTokens;
+        this.SBTState=SBTState;
     }
 }
 
