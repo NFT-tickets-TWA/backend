@@ -1,17 +1,12 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {EventStatus, EventType, Person, WhiteList} from "@prisma/client";
 
-class PersonDTO {
-    id?: number;
+export class PersonDTO {
+    @ApiProperty()
     walletAddress: string;
-    name: string;
-    roles: UserRoleDTO[];
-    WhiteList: WhiteListDTO[];
-    events: EventDTO[];
+    @ApiProperty({description:"telegram id"})
+    tgId: string;
 
-    constructor(data: PersonDTO) {
-        Object.assign(this, data);
-    }
 }
 class UserRoleDTO {
     id?: number;
@@ -41,17 +36,15 @@ class WhiteListDTO {
         Object.assign(this, data);
     }
 }
-export class EventDTOForPrint {
+export class EventDTOResponse {
     @ApiProperty()
     id: number;
     @ApiProperty()
     name: string;
     @ApiProperty()
-    symbol: string;
-    @ApiProperty()
     SBTState: boolean;
     @ApiProperty({uniqueItems:true})
-    nftPattern?: string | null;
+    nftIpfsUrl?: string | null;
     @ApiProperty()
     collectionAddr: string ;
     @ApiProperty({required:false})
@@ -75,16 +68,15 @@ export class EventDTOForPrint {
     @ApiProperty()
     statusId: number;
 }
-
-export class EventDTO {
+export class EventDTORequest {
     @ApiProperty()
     name: string;
-    @ApiProperty({required:false})
+    @ApiProperty({required:false, description:"ask Yaroslav, don't care now"})
     urlCover?: string | null;
     @ApiProperty({required:false})
     description?: string | null;
-    @ApiProperty()
-    creatorID: number;
+    @ApiProperty({description:"telegram id of creator"})
+    creatorTgId: string;
     @ApiProperty()
     SBTState: boolean;
     @ApiProperty({required:false})
@@ -93,18 +85,47 @@ export class EventDTO {
     finished_at?: Date;
     @ApiProperty({required:false})
     locationID?: number | null;
-    @ApiProperty({uniqueItems:true})
-    nftPattern: string;
-    @ApiProperty({required:false, default:0})
+    @ApiProperty({uniqueItems:true, description:"nft ipfs url"})
+    nftIpfsUrl: string;
     registeredParticipants?: number;
     @ApiProperty()
     countOfRewardTokens: number;
-    @ApiProperty({required:false, default:1})
+    @ApiProperty({required:false, default:1, description:"type of event, default not stated"})
     typeId?: number;
-    @ApiProperty({required:false, default:1})
+    @ApiProperty({required:false, default:1, description:"status of event, default not registered"})
     statusId?: number;
-    @ApiProperty()
-    symbol: string;
+}
+export class EventDTO {
+    name: string;
+    urlCover?: string | null;
+    description?: string | null;
+    creatorID: number;
+    SBTState: boolean;
+    started_at?: Date;
+    finished_at?: Date;
+    locationID?: number | null;
+    nftIpfsUrl: string;
+    registeredParticipants?: number;
+    countOfRewardTokens: number;
+    typeId?: number;
+    statusId?: number;
+}
+export function convertEventDTORequestToEventDTO(event: EventDTORequest, id:number):EventDTO{
+    let newEvent = new EventDTO();
+    newEvent.name=event.name;
+    newEvent.urlCover=event.urlCover;
+    newEvent.description=event.description;
+    newEvent.creatorID=id;
+    newEvent.SBTState=event.SBTState;
+    newEvent.started_at=event.started_at;
+    newEvent.finished_at=event.finished_at;
+    newEvent.locationID=event.locationID;
+    newEvent.nftIpfsUrl=event.nftIpfsUrl;
+    newEvent.registeredParticipants=event.registeredParticipants;
+    newEvent.countOfRewardTokens=event.countOfRewardTokens;
+    newEvent.typeId=event.typeId;
+    newEvent.statusId=event.statusId;
+    return newEvent;
 }
 class NftStatusDTO {
     id?: number;

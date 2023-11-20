@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Event, Prisma } from '@prisma/client';
 import { PrismaService } from './prisma.service';
-import {EventDTO, EventDTOForPrint} from "./event";
+import {EventDTO, EventDTOResponse} from "./event";
 
 @Injectable()
 export class EventService {
   constructor(private prisma: PrismaService) {}
 
-  async events():Promise<EventDTOForPrint[]> {
+  async events():Promise<EventDTOResponse[]> {
     return this.prisma.event.findMany();
   }
   async updateCollectionAdr(id:number, adr:string){
@@ -23,8 +23,13 @@ export class EventService {
   }
 
 
-  async createEvent(data: EventDTO): Promise<EventDTOForPrint> {
+  async createEvent(data: EventDTO): Promise<EventDTOResponse> {
     console.log(data)
     return this.prisma.event.create({ data });
+  }
+  async getEventsByTgId(tgID: string){
+    return  this.prisma.$queryRaw(
+        Prisma.sql`SELECT * FROM Event where Event.creatorID= (select id from Person where tgId=${tgID})`
+    )
   }
 }

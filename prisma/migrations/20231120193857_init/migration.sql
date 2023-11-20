@@ -49,7 +49,7 @@ CREATE TABLE "Event" (
     "started_at" DATETIME,
     "finished_at" DATETIME,
     "locationID" INTEGER,
-    "nftPattern" TEXT NOT NULL,
+    "nftIpfsUrl" TEXT NOT NULL,
     "collectionAddr" TEXT,
     "registeredParticipants" INTEGER NOT NULL DEFAULT 0,
     "countOfRewardTokens" INTEGER NOT NULL,
@@ -57,7 +57,6 @@ CREATE TABLE "Event" (
     "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "typeId" INTEGER NOT NULL DEFAULT 1,
     "statusId" INTEGER NOT NULL DEFAULT 1,
-    "symbol" TEXT NOT NULL,
     CONSTRAINT "Event_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "EventType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Event_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "EventStatus" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Event_locationID_fkey" FOREIGN KEY ("locationID") REFERENCES "Location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -95,7 +94,7 @@ CREATE TABLE "Location" (
 CREATE UNIQUE INDEX "NftList_whiteListId_key" ON "NftList"("whiteListId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Event_nftPattern_key" ON "Event"("nftPattern");
+CREATE UNIQUE INDEX "Event_nftIpfsUrl_key" ON "Event"("nftIpfsUrl");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_collectionAddr_key" ON "Event"("collectionAddr");

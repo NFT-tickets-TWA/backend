@@ -11,12 +11,12 @@ datasource db {
 }
 
 model Person {
-  id           Int         @id @default(autoincrement())
-  walletAdress String
-  name         String
-  roles        UserRole[]
-  WhiteList    WhiteList[]
-  events       Event[]
+  id            Int         @id @default(autoincrement())
+  walletAddress String      @unique
+  tgId          String      @unique
+  roles         UserRole[]
+  WhiteList     WhiteList[]
+  events        Event[]
 }
 
 model UserRole {
@@ -62,7 +62,8 @@ model Event {
   started_at             DateTime?
   finished_at            DateTime?
   locationID             Int?
-  nftPattern             String      @unique
+  // link to the ipfs
+  nftIpfsUrl             String      @unique
   collectionAddr         String?     @unique
   registeredParticipants Int         @default(0)
   countOfRewardTokens    Int
@@ -70,7 +71,6 @@ model Event {
   updated_at             DateTime    @default(now())
   typeId                 Int         @default(1)
   statusId               Int         @default(1)
-  symbol                 String
   WhiteList              WhiteList[]
   location               Location?   @relation(fields: [locationID], references: [id])
   creator                Person      @relation(fields: [creatorID], references: [id])
