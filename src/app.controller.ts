@@ -84,6 +84,7 @@ export class AppController {
                                 })
                             }
                         }).catch((error) => {
+                            console.log(error)
                             return res.status(400).json(error)
                         })
                     }
@@ -101,6 +102,7 @@ export class AppController {
             }
         ).catch(
             (error) => {
+                console.log(error)
                 return res.status(400).json(error)
             }
         )
