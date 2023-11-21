@@ -7,6 +7,10 @@ export class TypeEventService {
     constructor(private prisma: PrismaService) {
     }
     async getTypeEvents(): Promise<EventTypeDTO[]>{
-        return this.prisma.eventType.findMany();
+        return this.prisma.eventType.findMany({
+            select:{
+                type:true
+            }
+        });
     }
 }

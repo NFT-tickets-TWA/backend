@@ -7,6 +7,10 @@ export class StatusEventService {
     constructor(private prisma: PrismaService) {
     }
     async getStatusEvents(): Promise<EventStatusDTO[]>{
-        return this.prisma.eventStatus.findMany();
+        return this.prisma.eventStatus.findMany({
+            select:{
+                status:true
+            }
+        });
     }
 }
