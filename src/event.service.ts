@@ -32,4 +32,14 @@ export class EventService {
         Prisma.sql`SELECT * FROM Event where Event.creatorID= (select id from Person where tgId=${tgID})`
     )
   }
+  async getEventsByName(name: string){
+    console.log("get events by name " + name)
+    return this.prisma.event.findMany(
+        {
+          where:{
+            name:name
+          }
+        }
+    )
+  }
 }

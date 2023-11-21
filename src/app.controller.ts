@@ -8,11 +8,12 @@ import {
     Delete, Res,
 } from '@nestjs/common';
 
-// import {User as UserModel, Post as PostModel, Event} from '@prisma/client';
 import {EventService} from './event.service';
 import {PersonService} from './person.service';
-import {Event} from '@prisma/client';
-import {Request, Response} from "express";
+import {LocationService} from "./location.service";
+import {StatusEventService} from "./statusEvent.service";
+import {TypeEventService} from "./typeEvent.service";
+import {Response} from "express";
 import {createInternalEvent} from "./contract";
 import {
     ContractEvent,
@@ -20,12 +21,9 @@ import {
     EventDTO,
     EventDTOResponse,
     EventDTORequest,
-    PersonDTO
+    PersonDTO, LocationDTO, EventTypeDTO, EventStatusDTO
 } from "./event";
-import {error} from "@prisma/internals/dist/logger";
 import {ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
-
-// import { Post as PostModel, User as UserModel } from '@prisma/client';
 
 
 @Controller('api')
@@ -34,6 +32,9 @@ export class AppController {
     constructor(
         private readonly eventService: EventService,
         private readonly personService: PersonService,
+        private readonly locationService: LocationService,
+        private readonly typeEventService: TypeEventService,
+        private readonly statusEventService: StatusEventService,
     ) {
     }
 
@@ -59,7 +60,7 @@ export class AppController {
     @ApiBadRequestResponse({type: String, description: "return error message"})
     async createEvent(@Body() eventDataRequest: EventDTORequest, @Res() res: Response) {
         console.log(eventDataRequest)
-        const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIpfsUrl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.SBTState);
+        const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIPFSurl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.SBTState);
         const id = this.personService.getPersonByTgId(eventDataRequest.creatorTgId).then(
             (person) => {
                 const eventData = convertEventDTORequestToEventDTO(eventDataRequest, person.id)
@@ -161,7 +162,8 @@ export class AppController {
 
     @Get('events_by_tg/:id')
     @ApiOperation({summary: "get events by user telegram id"})
-    @ApiOkResponse({ isArray: true, description: "return array of events"
+    @ApiOkResponse({
+        isArray: true, description: "return array of events"
     })
     @ApiBadRequestResponse({type: String, description: "return error"})
     async getEventsById(@Param('id') id: string, @Res() res: Response) {
@@ -177,66 +179,80 @@ export class AppController {
             }
         )
     }
-    // @Get('post/:id')
-    // async getPostById(@Param('id') id: string): Promise<PostModel> {
-    //     return this.postService.post({ id: Number(id) });
-    // }
-    //
-    // @Get('feed')
-    // async getPublishedPosts(): Promise<PostModel[]> {
-    //     return this.postService.posts({
-    //         where: {
-    //             published: true,
-    //         },
-    //     });
-    // }
-    //
-    // @Get('filtered-posts/:searchString')
-    // async getFilteredPosts(
-    //     @Param('searchString') searchString: string,
-    // ): Promise<PostModel[]> {
-    //     return this.postService.posts({
-    //         where: {
-    //             OR: [
-    //                 {
-    //                     title: { contains: searchString },
-    //                 },
-    //                 {
-    //                     content: { contains: searchString },
-    //                 },
-    //             ],
-    //         },
-    //     });
-    // }
-    //
-    // @Post('post')
-    // async createDraft(@Body() postData: PostData): Promise<PostModel> {
-    //     const { title, content, authorEmail } = postData;
-    //
-    //     return this.postService.createPost({
-    //         title,
-    //         content,
-    //         author: {
-    //             connect: { email: authorEmail },
-    //         },
-    //     });
-    // }
-    //
-    // @Put('publish/:id')
-    // async publishPost(@Param('id') id: string): Promise<PostModel> {
-    //     return this.postService.updatePost({
-    //         where: { id: Number(id) },
-    //         data: { published: true },
-    //     });
-    // }
-    //
-    // @Delete('post/:id')
-    // async removePost(@Param('id') id: string): Promise<PostModel> {
-    //     return this.postService.removePost({ id: Number(id) });
-    // }
-    //
-    // @Post('user')
-    // async registerUser(@Body() userData: UserData): Promise<UserModel> {
-    //     return this.userService.createUser(userData);
-    // }
+
+    @Get('events_by_name/:name')
+    @ApiOperation({summary: "get events by name"})
+    @ApiOkResponse({
+        isArray: true, type: EventDTOResponse, description: "return array of events"
+    })
+    @ApiBadRequestResponse({type: String, description: "return error"})
+    async getEventsByName(@Param('name') name: string, @Res() res: Response) {
+        console.log("request")
+        this.eventService.getEventsByName(name).then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch(
+            (e) => {
+                console.log(e)
+                return res.status(500).json(e)
+            }
+        )
+    }
+
+    @Get('locations')
+    @ApiOperation({summary: "get locations"})
+    @ApiOkResponse({
+        isArray: true, type: LocationDTO, description: "return array of locations"
+    })
+    @ApiBadRequestResponse({type: String, description: "return error"})
+    async getLocations(@Res() res: Response) {
+        console.log("request")
+        this.locationService.getLocations().then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch(
+            (e) => {
+                console.log(e)
+                return res.status(500).json(e)
+            }
+        )
+    }
+
+    @Get('types')
+    @ApiOperation({summary: "get types"})
+    @ApiOkResponse({isArray: true, type: EventTypeDTO, description: "return array of types"})
+    @ApiBadRequestResponse({type: String, description: "return error"})
+    async getTypes(@Res() res: Response) {
+        console.log("request")
+        this.typeEventService.getTypeEvents().then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch(
+            (e) => {
+                console.log(e)
+                return res.status(500).json(e)
+            }
+        )
+    }
+
+    @Get('statuses')
+    @ApiOperation({summary: "get statuses of event"})
+    @ApiOkResponse({isArray: true, type: EventStatusDTO, description: "return array of statuses"})
+    @ApiBadRequestResponse({type: String, description: "return error"})
+    async getStatuses(@Res() res: Response) {
+        console.log("request")
+        this.statusEventService.getStatusEvents().then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch(
+            (e) => {
+                console.log(e)
+                return res.status(500).json(e)
+            }
+        )
+    }
 }

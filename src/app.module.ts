@@ -9,6 +9,9 @@ import { HttpModule } from "@nestjs/axios";
 // import { SubredditService } from './subreddit.service';
 
 import {Prisma} from '@prisma/client'
+import {LocationService} from "./location.service";
+import {StatusEventService} from "./statusEvent.service";
+import {TypeEventService} from "./typeEvent.service";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -102,7 +105,7 @@ const authenticate = async (email: string, password: string) => {
         })),
     HttpModule],
     controllers: [AppController],
-    providers: [PrismaService, PersonService, EventService],
+    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService],
 })
 export class AppModule {
 }

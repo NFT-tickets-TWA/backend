@@ -86,7 +86,7 @@ export class EventDTORequest {
     @ApiProperty({required:false})
     locationID?: number | null;
     @ApiProperty({uniqueItems:true, description:"nft ipfs url"})
-    nftIpfsUrl: string;
+    nftIPFSurl: string;
     registeredParticipants?: number;
     @ApiProperty()
     countOfRewardTokens: number;
@@ -104,7 +104,7 @@ export class EventDTO {
     started_at?: Date;
     finished_at?: Date;
     locationID?: number | null;
-    nftIpfsUrl: string;
+    nftIPFSurl: string;
     registeredParticipants?: number;
     countOfRewardTokens: number;
     typeId?: number;
@@ -120,7 +120,7 @@ export function convertEventDTORequestToEventDTO(event: EventDTORequest, id:numb
     newEvent.started_at=event.started_at;
     newEvent.finished_at=event.finished_at;
     newEvent.locationID=event.locationID;
-    newEvent.nftIpfsUrl=event.nftIpfsUrl;
+    newEvent.nftIPFSurl=event.nftIPFSurl;
     newEvent.registeredParticipants=event.registeredParticipants;
     newEvent.countOfRewardTokens=event.countOfRewardTokens;
     newEvent.typeId=event.typeId;
@@ -145,35 +145,28 @@ class RoleDTO {
     }
 }
 
-class EventTypeDTO {
+export class EventTypeDTO {
     id?: number;
+    @ApiProperty()
     type: string;
-    events: EventDTO[];
-
-    constructor(data: EventTypeDTO) {
-        Object.assign(this, data);
-    }
 }
-class EventStatusDTO {
+export class EventStatusDTO {
     id?: number;
+    @ApiProperty()
     status: string;
-    events: EventDTO[];
 
-    constructor(data: EventStatusDTO) {
-        Object.assign(this, data);
-    }
+
 }
-class LocationDTO {
+export class LocationDTO {
     id?: number;
+    @ApiProperty()
     address?: string;
+    @ApiProperty()
     room?: string;
+    @ApiProperty()
     isOffline: boolean;
+    @ApiProperty()
     link?: string;
-    events: EventDTO[];
-
-    constructor(data: LocationDTO) {
-        Object.assign(this, data);
-    }
 }
 
 

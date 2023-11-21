@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "Person" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "walletAdress" TEXT NOT NULL,
-    "name" TEXT NOT NULL
+    "walletAddress" TEXT NOT NULL,
+    "tgId" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -49,7 +49,7 @@ CREATE TABLE "Event" (
     "started_at" DATETIME,
     "finished_at" DATETIME,
     "locationID" INTEGER,
-    "nftIpfsUrl" TEXT NOT NULL,
+    "nftIPFSurl" TEXT NOT NULL,
     "collectionAddr" TEXT,
     "registeredParticipants" INTEGER NOT NULL DEFAULT 0,
     "countOfRewardTokens" INTEGER NOT NULL,
@@ -91,10 +91,16 @@ CREATE TABLE "Location" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Person_walletAddress_key" ON "Person"("walletAddress");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Person_tgId_key" ON "Person"("tgId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "NftList_whiteListId_key" ON "NftList"("whiteListId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Event_nftIpfsUrl_key" ON "Event"("nftIpfsUrl");
+CREATE UNIQUE INDEX "Event_nftIPFSurl_key" ON "Event"("nftIPFSurl");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_collectionAddr_key" ON "Event"("collectionAddr");
