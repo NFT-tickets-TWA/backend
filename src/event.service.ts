@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Event, Prisma } from '@prisma/client';
 import { PrismaService } from './prisma.service';
 import {EventDTO, EventDTOResponse} from "./event";
+import {toNumber} from "ethers";
 
 @Injectable()
 export class EventService {
@@ -38,6 +39,16 @@ export class EventService {
         {
           where:{
             name:name
+          }
+        }
+    )
+  }
+  async getEventByID(id: number){
+    console.log("get event by id " + id)
+    return this.prisma.event.findUnique(
+        {
+          where:{
+            id:toNumber(id)
           }
         }
     )

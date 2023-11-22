@@ -199,6 +199,23 @@ export class AppController {
             }
         )
     }
+    @Get('event_by_id/:id')
+    @ApiOperation({summary: "get event by id"})
+    @ApiOkResponse({type: EventDTOResponse, description: "return an event"})
+    @ApiBadRequestResponse({type: String, description: "return error"})
+    async getEventByID(@Param('id') id: number, @Res() res: Response) {
+        console.log("request")
+        this.eventService.getEventByID(id).then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch(
+            (e) => {
+                console.log(e)
+                return res.status(500).json(e)
+            }
+        )
+    }
 
     @Get('locations')
     @ApiOperation({summary: "get locations"})
