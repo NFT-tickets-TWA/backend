@@ -23,7 +23,7 @@ import {
     EventDTORequest,
     PersonDTO, LocationDTO, EventTypeDTO, EventStatusDTO
 } from "./event";
-import {ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
+import {ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 
 
 @Controller('api')
@@ -58,6 +58,7 @@ export class AppController {
     @ApiOperation({summary: "create event contract and add it to the database"})
     @ApiOkResponse({type: Number, description: "return id of created event"})
     @ApiBadRequestResponse({type: String, description: "return error message"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async createEvent(@Body() eventDataRequest: EventDTORequest, @Res() res: Response) {
         console.log(eventDataRequest)
         const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIPFSurl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.SBTState);
@@ -114,7 +115,7 @@ export class AppController {
     @Post('person')
     @ApiOperation({summary: "create person"})
     @ApiOkResponse({type: Number, description: "return id of created person"})
-    @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async createPerson(@Body() person: PersonDTO, @Res() res: Response) {
         console.log("create person")
         this.personService.createPerson(person).then(
@@ -146,6 +147,7 @@ export class AppController {
         }, isArray: true, description: "return array with wallet address and his roles"
     })
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getPersonById(@Param('id') id: string, @Res() res: Response) {
         console.log("person with role by tg id")
         this.personService.getRoleByIDPerson(id).then(
@@ -166,6 +168,7 @@ export class AppController {
         isArray: true, description: "return array of events"
     })
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getEventsById(@Param('id') id: string, @Res() res: Response) {
         console.log("events created by tg id user")
         this.eventService.getEventsByTgId(id).then(
@@ -186,6 +189,7 @@ export class AppController {
         isArray: true, type: EventDTOResponse, description: "return array of events"
     })
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getEventsByName(@Param('name') name: string, @Res() res: Response) {
         console.log("request")
         this.eventService.getEventsByName(name).then(
@@ -201,8 +205,9 @@ export class AppController {
     }
     @Get('event_by_id/:id')
     @ApiOperation({summary: "get event by id"})
-    @ApiOkResponse({type: EventDTOResponse, description: "return an event"})
+    @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getEventByID(@Param('id') id: number, @Res() res: Response) {
         console.log("request")
         this.eventService.getEventByID(id).then(
@@ -223,6 +228,7 @@ export class AppController {
         isArray: true, type: LocationDTO, description: "return array of locations"
     })
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getLocations(@Res() res: Response) {
         console.log("request")
         this.locationService.getLocations().then(
@@ -241,6 +247,7 @@ export class AppController {
     @ApiOperation({summary: "get types"})
     @ApiOkResponse({isArray: true, type: EventTypeDTO, description: "return array of types"})
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getTypes(@Res() res: Response) {
         console.log("request")
         this.typeEventService.getTypeEvents().then(
@@ -259,6 +266,7 @@ export class AppController {
     @ApiOperation({summary: "get statuses of event"})
     @ApiOkResponse({isArray: true, type: EventStatusDTO, description: "return array of statuses"})
     @ApiBadRequestResponse({type: String, description: "return error"})
+    @ApiResponse({status:500, type: String, description: "return error"})
     async getStatuses(@Res() res: Response) {
         console.log("request")
         this.statusEventService.getStatusEvents().then(
