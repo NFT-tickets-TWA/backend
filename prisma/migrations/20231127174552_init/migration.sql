@@ -2,7 +2,7 @@
 CREATE TABLE "Person" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "walletAddress" TEXT NOT NULL,
-    "tgId" TEXT NOT NULL
+    "tgId" INTEGER NOT NULL
 );
 
 -- CreateTable
@@ -44,7 +44,7 @@ CREATE TABLE "Event" (
     "name" TEXT NOT NULL,
     "urlCover" TEXT,
     "description" TEXT,
-    "SBTState" BOOLEAN NOT NULL,
+    "isSBT" BOOLEAN NOT NULL,
     "creatorID" INTEGER NOT NULL,
     "started_at" DATETIME,
     "finished_at" DATETIME,

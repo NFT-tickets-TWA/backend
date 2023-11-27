@@ -5,7 +5,7 @@ export class PersonDTO {
     @ApiProperty()
     walletAddress: string;
     @ApiProperty({description:"telegram id"})
-    tgId: string;
+    tgId: number;
 
 }
 class UserRoleDTO {
@@ -42,7 +42,7 @@ export class EventDTOResponse {
     @ApiProperty()
     name: string;
     @ApiProperty()
-    SBTState: boolean;
+    isSBT: boolean;
     @ApiProperty({uniqueItems:true})
     nftIpfsUrl?: string | null;
     @ApiProperty()
@@ -76,9 +76,9 @@ export class EventDTORequest {
     @ApiProperty({required:false})
     description?: string | null;
     @ApiProperty({description:"telegram id of creator"})
-    creatorTgId: string;
+    creatorTgId: number;
     @ApiProperty()
-    SBTState: boolean;
+    isSBT: boolean;
     @ApiProperty({required:false})
     started_at?: Date;
     @ApiProperty({required:false})
@@ -100,7 +100,7 @@ export class EventDTO {
     urlCover?: string | null;
     description?: string | null;
     creatorID: number;
-    SBTState: boolean;
+    isSBT: boolean;
     started_at?: Date;
     finished_at?: Date;
     locationID?: number | null;
@@ -116,7 +116,7 @@ export function convertEventDTORequestToEventDTO(event: EventDTORequest, id:numb
     newEvent.urlCover=event.urlCover;
     newEvent.description=event.description;
     newEvent.creatorID=id;
-    newEvent.SBTState=event.SBTState;
+    newEvent.isSBT=event.isSBT;
     newEvent.started_at=event.started_at;
     newEvent.finished_at=event.finished_at;
     newEvent.locationID=event.locationID;

@@ -14,7 +14,7 @@ export class PersonService {
   async createPerson(data: PersonDTO): Promise<Person> {
     return this.prisma.person.create({ data });
   }
-  async getPersonByTgId(tg: string):Promise<Person>{
+  async getPersonByTgId(tg: number):Promise<Person>{
     return this.prisma.person.findUniqueOrThrow({
       where: {
         tgId:tg
