@@ -30,19 +30,21 @@ import {Prisma} from '@prisma/client';
 @Controller('api')
 @ApiTags("API")
 export class AppController {
-    private static readonly errorDescription:string = "Prisma Client throws a PrismaClientKnownRequestError exception if the query engine returns a known error related to the request - for example, a unique constraint violation." +
+    private static readonly errorDescription: string = "Prisma Client throws a PrismaClientKnownRequestError exception if the query engine returns a known error related to the request - for example, a unique constraint violation." +
         "\n\nPrisma Client throws a PrismaClientUnknownRequestError exception if the query engine returns an error related to a request that does not have an error code." +
         "\n\nPrisma Client throws a PrismaClientValidationError exception if validation fails - for example:\n" +
         "\n" +
         "Missing field - for example, an empty data: {} property when creating a new record\n" +
         "Incorrect field type provided (for example, setting a Boolean field to \"Hello, I like cheese and gold!\")";
+
     constructor(
         private readonly eventService: EventService,
         private readonly personService: PersonService,
         private readonly locationService: LocationService,
         private readonly typeEventService: TypeEventService,
         private readonly statusEventService: StatusEventService,
-    ) {}
+    ) {
+    }
 
     generateSymbol(): string {
         const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -59,16 +61,21 @@ export class AppController {
     @ApiResponse({
         status: 400,
         schema: {example: {message: 'message'}},
-        description: AppController.errorDescription})
+        description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {example: {message: 'message'}},
         description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or smth unknown else"
     })
     async getEvents(@Res() res: Response) {
-        return this.eventService.events().catch((error) => {
-            this.handlePrismaError(error, res);
+        console.log("request")
+        this.eventService.events().then((result) => {
+            return res.status(200).json(result);
         })
+            .catch((error) => {
+                this.handlePrismaError(error, res);
+            })
     }
 
 
@@ -78,7 +85,8 @@ export class AppController {
     @ApiResponse({
         status: 400,
         schema: {example: {message: 'message'}},
-        description:  AppController.errorDescription})
+        description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {example: {message: 'message'}},
@@ -129,7 +137,8 @@ export class AppController {
     @Post('person')
     @ApiOperation({summary: "create person"})
     @ApiOkResponse({type: Number, description: "return id of created person"})
-    @ApiResponse({status: 400,
+    @ApiResponse({
+        status: 400,
         schema: {example: {message: 'message'}},
         description: AppController.errorDescription
     })
@@ -176,7 +185,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription})
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -212,7 +222,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription})
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -248,7 +259,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription})
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -282,7 +294,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription})
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -318,7 +331,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription })
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -352,7 +366,8 @@ export class AppController {
                     message: 'message'
                 }
 
-        }, description:  AppController.errorDescription})
+        }, description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
@@ -387,7 +402,8 @@ export class AppController {
                 }
 
         },
-        description:  AppController.errorDescription})
+        description: AppController.errorDescription
+    })
     @ApiResponse({
         status: 500,
         schema: {
