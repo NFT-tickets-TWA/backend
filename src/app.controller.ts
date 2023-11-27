@@ -21,10 +21,11 @@ import {
     EventDTO,
     EventDTOResponse,
     EventDTORequest,
-    PersonDTO, LocationDTO, EventTypeDTO, EventStatusDTO
+    PersonDTO, LocationDTO, EventTypeDTO, EventStatusDTO, WhiteListDTO
 } from "./event";
 import {ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Prisma} from '@prisma/client';
+import {WhiteListService} from "./whiteList.service";
 
 
 @Controller('api')
@@ -43,6 +44,7 @@ export class AppController {
         private readonly locationService: LocationService,
         private readonly typeEventService: TypeEventService,
         private readonly statusEventService: StatusEventService,
+        private readonly whiteListService: WhiteListService
     ) {
     }
 
@@ -422,6 +424,40 @@ export class AppController {
                 return res.status(200).json(data)
             }
         ).catch((error) => {
+            this.handlePrismaError(error, res);
+        })
+    }
+    @Post('register')
+    @ApiOperation({summary: "register user on event"})
+    @ApiOkResponse()
+    @ApiResponse({
+        status: 400,
+        schema: {
+            example:
+                {
+                    message: 'message'
+                }
+
+        },
+        description: AppController.errorDescription
+    })
+    @ApiResponse({
+        status: 500,
+        schema: {
+            example:
+                {
+                    message: 'message'
+                }
+
+        },
+        description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or smth unknown else"
+    })
+    async registerUserOnEvent(@Body() whiteListDTO:WhiteListDTO, @Res() res: Response) {
+        console.log("request")
+        this.whiteListService.register(whiteListDTO).then((result)=>{
+            return res.status(200);
+        })
+            .catch((error) => {
             this.handlePrismaError(error, res);
         })
     }

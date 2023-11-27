@@ -26,15 +26,12 @@ class NftListDTO {
         Object.assign(this, data);
     }
 }
-class WhiteListDTO {
-    id?: number;
-    person: PersonDTO;
-    event: EventDTO;
-    nftList?: NftListDTO;
-
-    constructor(data: WhiteListDTO) {
-        Object.assign(this, data);
-    }
+export class WhiteListDTO {
+    id?: number
+    @ApiProperty()
+    personID: number
+    @ApiProperty()
+    eventID: number
 }
 export class EventDTOResponse {
     @ApiProperty()

@@ -12,6 +12,7 @@ import {Prisma} from '@prisma/client'
 import {LocationService} from "./location.service";
 import {StatusEventService} from "./statusEvent.service";
 import {TypeEventService} from "./typeEvent.service";
+import {WhiteListService} from "./whiteList.service";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -105,7 +106,7 @@ const authenticate = async (email: string, password: string) => {
         })),
     HttpModule],
     controllers: [AppController],
-    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService],
+    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService, WhiteListService],
 })
 export class AppModule {
 }
