@@ -427,39 +427,18 @@ export class AppController {
             this.handlePrismaError(error, res);
         })
     }
+
     @Post('register')
     @ApiOperation({summary: "register user on event"})
-    @ApiOkResponse()
-    @ApiResponse({
-        status: 400,
-        schema: {
-            example:
-                {
-                    message: 'message'
-                }
-
-        },
-        description: AppController.errorDescription
-    })
-    @ApiResponse({
-        status: 500,
-        schema: {
-            example:
-                {
-                    message: 'message'
-                }
-
-        },
-        description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or smth unknown else"
-    })
-    async registerUserOnEvent(@Body() whiteListDTO:WhiteListDTO, @Res() res: Response) {
+    @ApiOkResponse({type: String, description: "return true if created in another case false"})
+    async registerUserOnEvent(@Body() whiteListDTO: WhiteListDTO, @Res() res: Response) {
         console.log("request")
-        this.whiteListService.register(whiteListDTO).then((result)=>{
-            return res.status(200);
+        this.whiteListService.register(whiteListDTO).then((result) => {
+            return res.status(200).json("true");
         })
             .catch((error) => {
-            this.handlePrismaError(error, res);
-        })
+                return res.status(200).json("false");
+            })
     }
 
     private handlePrismaError(error: any, res: Response): Response<any, Record<string, any>> {
