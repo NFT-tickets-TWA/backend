@@ -58,7 +58,7 @@ export class AppController {
     }
 
     @Get('events')
-    @ApiOperation({summary: "returns all events in database"})
+    @ApiOperation({summary: "returns all events in database", operationId:"events"})
     @ApiOkResponse({type: EventDTOResponse, isArray: true, description: "array of events"})
     @ApiResponse({
         status: 400,
@@ -82,7 +82,7 @@ export class AppController {
 
 
     @Post('event')
-    @ApiOperation({summary: "create event contract and add it to the database"})
+    @ApiOperation({summary: "create event contract and add it to the database", operationId:"event"})
     @ApiOkResponse({type: Number, description: "return id of created event"})
     @ApiResponse({
         status: 400,
@@ -137,7 +137,7 @@ export class AppController {
     }
 
     @Post('person')
-    @ApiOperation({summary: "create person"})
+    @ApiOperation({summary: "create person",operationId:"person"})
     @ApiOkResponse({type: Number, description: "return id of created person"})
     @ApiResponse({
         status: 400,
@@ -161,15 +161,17 @@ export class AppController {
     }
 
     @Get('person_by_tg/:id')
-    @ApiOperation({summary: "get person and his roles by tg if no role return null"})
+    @ApiOperation({summary: "get person and his roles by tg if no role return null", operationId:"person_by_tg"})
     @ApiOkResponse({
         schema: {
             example: [
                 {
+                    id: 1,
                     walletAddress: 'address',
                     role: "ADMIN"
                 },
                 {
+                    id:1,
                     walletAddress: 'address',
                     role: "USER"
                 }
@@ -212,7 +214,7 @@ export class AppController {
     }
 
     @Get('events_by_tg/:id')
-    @ApiOperation({summary: "get events by user telegram id"})
+    @ApiOperation({summary: "get events by user telegram id", operationId:"events_by_tg"})
     @ApiOkResponse({
         isArray: true, description: "return array of events"
     })
@@ -249,7 +251,7 @@ export class AppController {
     }
 
     @Get('events_by_name/:name')
-    @ApiOperation({summary: "get events by name"})
+    @ApiOperation({summary: "get events by name", operationId:"events_by_name"})
     @ApiOkResponse({
         isArray: true, type: EventDTOResponse, description: "return array of events"
     })
@@ -286,7 +288,7 @@ export class AppController {
     }
 
     @Get('event_by_id/:id')
-    @ApiOperation({summary: "get event by id"})
+    @ApiOperation({summary: "get event by id",operationId:"event_by_id"})
     @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
     @ApiResponse({
         status: 400,
@@ -321,7 +323,7 @@ export class AppController {
     }
 
     @Get('locations')
-    @ApiOperation({summary: "get locations"})
+    @ApiOperation({summary: "get locations", operationId:"locations"})
     @ApiOkResponse({
         isArray: true, type: LocationDTO, description: "return array of locations"
     })
@@ -358,7 +360,7 @@ export class AppController {
     }
 
     @Get('types')
-    @ApiOperation({summary: "get types"})
+    @ApiOperation({summary: "get types", operationId:"types"})
     @ApiOkResponse({isArray: true, type: EventTypeDTO, description: "return array of types"})
     @ApiResponse({
         status: 400,
@@ -393,7 +395,7 @@ export class AppController {
     }
 
     @Get('statuses')
-    @ApiOperation({summary: "get statuses of event"})
+    @ApiOperation({summary: "get statuses of event",operationId:"statuses"})
     @ApiOkResponse({isArray: true, type: EventStatusDTO, description: "return array of statuses"})
     @ApiResponse({
         status: 400,
@@ -429,7 +431,7 @@ export class AppController {
     }
 
     @Post('register')
-    @ApiOperation({summary: "register user on event"})
+    @ApiOperation({summary: "register user on event", operationId:"register"})
     @ApiOkResponse({type: String, description: "return true if created in another case false"})
     async registerUserOnEvent(@Body() whiteListDTO: WhiteListDTO, @Res() res: Response) {
         console.log("request")

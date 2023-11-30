@@ -24,7 +24,7 @@ export class PersonService {
   async getRoleByIDPerson(tg: string){
     console.log(tg);
     return  this.prisma.$queryRaw(
-        Prisma.sql`SELECT walletAddress, name as role FROM Person left join UserRole on Person.id=UserRole.personID left join Role on UserRole.roleID=Role.id WHERE tgId = ${tg}`
+        Prisma.sql`SELECT Person.id, walletAddress, name as role FROM Person left join UserRole on Person.id=UserRole.personID left join Role on UserRole.roleID=Role.id WHERE tgId = ${tg}`
     )
   }
 }
