@@ -13,7 +13,7 @@ datasource db {
 model Person {
   id            Int         @id @default(autoincrement())
   walletAddress String      @unique
-  tgId          Int         @unique
+  tgId          BigInt      @unique
   roles         UserRole[]
   WhiteList     WhiteList[]
   events        Event[]

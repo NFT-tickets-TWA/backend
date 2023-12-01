@@ -215,7 +215,7 @@ export class AppController {
 
     @Get('events_by_tg/:id')
     @ApiOperation({summary: "get events by user telegram id", operationId:"events_by_tg"})
-    @ApiOkResponse({
+    @ApiOkResponse({ type:EventDTO,
         isArray: true, description: "return array of events"
     })
     @ApiResponse({
