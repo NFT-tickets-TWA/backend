@@ -5,7 +5,7 @@ export class PersonDTO {
     @ApiProperty()
     walletAddress: string;
     @ApiProperty({description:"telegram id"})
-    tgId: number;
+    tgId: string;
 
 }
 class UserRoleDTO {
@@ -73,7 +73,7 @@ export class EventDTORequest {
     @ApiProperty({required:false})
     description?: string | null;
     @ApiProperty({description:"telegram id of creator"})
-    creatorTgId: number;
+    creatorTgId: string;
     @ApiProperty()
     isSBT: boolean;
     @ApiProperty({required:false})
