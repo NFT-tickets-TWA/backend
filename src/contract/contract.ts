@@ -1,7 +1,8 @@
 import * as url from "url";
 import * as process from "process";
 import {ethers} from "ethers";
-import {ContractEvent, Response} from './event';
+import {ContractEvent} from '../stractures/stractures';
+import {CustomResponse} from "../stractures/response";
 
 require("dotenv").config();
 
@@ -22,7 +23,7 @@ export async function createInternalEvent(event: ContractEvent) {
     console.log("creating internal event");
     if (!event.name==undefined || event.nftPattern==undefined || event.symbol==undefined || event.countOfRewardTokens==undefined || event.SBTState==undefined) {
         // Return a response to the client
-        return new Response(400, "Required data is missing");
+        return new CustomResponse(400, "Required data is missing");
     }
 
 
@@ -44,9 +45,9 @@ export async function createInternalEvent(event: ContractEvent) {
         await createReceipt.wait();
         console.log("response received");
 
-        return new Response(200, "Internal event created successfully", createReceipt.hash);
+        return new CustomResponse(200, "Internal event created successfully", createReceipt.hash);
     } catch (e) {
         console.error(e);
-        return new Response(520, "Failed to created event");
+        return new CustomResponse(520, "Failed to created event");
     }
 };

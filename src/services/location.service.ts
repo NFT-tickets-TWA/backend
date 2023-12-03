@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {PrismaService} from "./prisma.service";
-import {LocationDTO} from "./event";
+import {LocationDTO} from "../stractures/stractures";
 
 @Injectable()
 export class LocationService {

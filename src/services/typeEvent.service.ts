@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {PrismaService} from "./prisma.service";
-import {EventStatusDTO, EventTypeDTO} from "./event";
+import {EventStatusDTO, EventTypeDTO} from "../stractures/stractures";
 
 @Injectable()
 export class TypeEventService {

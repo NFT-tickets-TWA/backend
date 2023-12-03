@@ -1,18 +1,24 @@
 import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
 
-import {PrismaService} from './prisma.service';
-import {PersonService} from './person.service';
-import {EventService} from './event.service';
+
+import {PrismaService} from './services/prisma.service';
+import {PersonService} from './services/person.service';
+import {EventService} from './services/event.service';
 import { HttpModule } from "@nestjs/axios";
 
 // import { SubredditService } from './subreddit.service';
 
 import {Prisma} from '@prisma/client'
-import {LocationService} from "./location.service";
-import {StatusEventService} from "./statusEvent.service";
-import {TypeEventService} from "./typeEvent.service";
-import {WhiteListService} from "./whiteList.service";
+import {LocationService} from "./services/location.service";
+import {StatusEventService} from "./services/statusEvent.service";
+import {TypeEventService} from "./services/typeEvent.service";
+import {WhiteListService} from "./services/whiteList.service";
+import {EventController} from "./controllers/event.controller";
+import {PersonController} from "./controllers/person.controller";
+import {WhiteListController} from "./controllers/whiteList.controller";
+import {LocationController} from "./controllers/location.controller";
+import {TypeController} from "./controllers/type.controller";
+import {StatusController} from "./controllers/status.controller";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -38,10 +44,8 @@ const authenticate = async (email: string, password: string) => {
 
 @Module({
     imports: [
-        // AdminJS version 7 is ESM-only. In order to import it, you have to use dynamic imports.
-        import('@adminjs/nestjs').then(({AdminModule}) => AdminModule.createAdminAsync({
-            // imports: [DatabaseModule],
-            // inject: [PrismaService],
+      import('@adminjs/nestjs').then(({AdminModule}) => AdminModule.createAdminAsync({
+
             useFactory: () => {
                 const prisma = new PrismaService()
                 const dmmf = Prisma.dmmf
@@ -105,7 +109,7 @@ const authenticate = async (email: string, password: string) => {
             },
         })),
     HttpModule],
-    controllers: [AppController],
+    controllers: [EventController, PersonController, WhiteListController, LocationController, TypeController,StatusController],
     providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService, WhiteListService],
 })
 export class AppModule {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Person, Prisma } from '@prisma/client';
 import { PrismaService } from './prisma.service';
-import {PersonDTO, WhiteListDTO} from "./event";
+import {PersonDTO, WhiteListDTO} from "../stractures/stractures";
 
 @Injectable()
 export class WhiteListService {

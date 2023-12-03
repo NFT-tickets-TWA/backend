@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Person, Prisma } from '@prisma/client';
 import { PrismaService } from './prisma.service';
-import {PersonDTO} from "./event";
+import {PersonDTO} from "../stractures/stractures";
 
 @Injectable()
 export class PersonService {
@@ -23,8 +23,23 @@ export class PersonService {
   }
   async getRoleByIDPerson(tg: string){
     console.log(tg);
-    return  this.prisma.$queryRaw(
-        Prisma.sql`SELECT Person.id, walletAddress, name as role FROM Person left join UserRole on Person.id=UserRole.personID left join Role on UserRole.roleID=Role.id WHERE tgId = ${tg}`
+    return this.prisma.person.findMany(
+        {
+          select:{
+            id: true,
+            walletAddress:true,
+            roles:{
+              select:{
+                role:{
+                  select:{
+                    name:true
+                  }
+                }
+              }
+            }
+          }
+        }
     )
+
   }
 }
