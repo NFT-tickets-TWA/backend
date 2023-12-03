@@ -18,7 +18,8 @@ async function bootstrap() {
   // swagger
   const config = new DocumentBuilder()
       .setTitle('NFT-Tickets server')
-      .setDescription('Description')
+      .setDescription('Main server')
+      .addServer("https://prisma-production-1488.up.railway.app")
       .setVersion('0.1')
       .build();
   const document = SwaggerModule.createDocument(app, config);
