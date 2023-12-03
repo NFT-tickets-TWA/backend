@@ -48,7 +48,7 @@ export class EventController {
     @Response500()
     async createEvent(@Body() eventDataRequest: EventDTORequest, @Res() res: Response) {
         console.log(eventDataRequest)
-        const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIPFSurl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.isSBT);
+        const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIpfsUrl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.isSBT);
         const id = this.personService.getPersonByTgId(eventDataRequest.creatorTgId).then(
             (person) => {
                 const eventData = convertEventDTORequestToEventDTO(eventDataRequest, person.id)
