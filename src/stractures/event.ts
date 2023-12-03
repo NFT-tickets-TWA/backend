@@ -64,7 +64,7 @@ export class EventDTORequest {
     }) locationID ?: number | null;
     @ApiProperty({
         uniqueItems: true, description: "nft ipfs url"
-    }) nftIPFSurl: string;
+    }) nftIpfsUrl: string;
     registeredParticipants ?: number;
     @ApiProperty()
     countOfRewardTokens: number;
@@ -85,7 +85,7 @@ export class EventDTO {
     started_at ?: Date;
     finished_at ?: Date;
     locationID ?: number | null;
-    nftIPFSurl: string;
+    nftIpfsUrl: string;
     registeredParticipants ?: number;
     countOfRewardTokens: number;
     typeId ?: number;
@@ -102,7 +102,7 @@ export function convertEventDTORequestToEventDTO(event: EventDTORequest, id: num
     newEvent.started_at = event.started_at;
     newEvent.finished_at = event.finished_at;
     newEvent.locationID = event.locationID;
-    newEvent.nftIPFSurl = event.nftIPFSurl;
+    newEvent.nftIpfsUrl = event.nftIpfsUrl;
     newEvent.registeredParticipants = event.registeredParticipants;
     newEvent.countOfRewardTokens = event.countOfRewardTokens;
     newEvent.typeId = event.typeId;
