@@ -1,6 +1,6 @@
-import {Controller, Get, Res} from "@nestjs/common";
+import {Body, Controller, Get, Post, Res} from "@nestjs/common";
 import {ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
-import {LocationDTO} from "../stractures/stractures";
+import {LocationDTO, PersonDTO} from "../stractures/stractures";
 import {Response} from "express";
 import {LocationService} from "../services/location.service";
 import {handlePrismaError} from "./util";
@@ -22,6 +22,20 @@ export class LocationController{
         this.locationService.getLocations().then(
             (data) => {
                 return res.status(200).json(data)
+            }
+        ).catch((error) => {
+            handlePrismaError(error, res);
+        })
+    }
+    @Post()
+    @ApiOperation({summary: "create location",operationId:"createLocation", tags:["location"]})
+    @Response400()
+    @Response500()
+    async createLocation(@Body() location: LocationDTO, @Res() res: Response) {
+        console.log("request: create location")
+        this.locationService.createLocation(location).then(
+            (data) => {
+                return res.status(200).json()
             }
         ).catch((error) => {
             handlePrismaError(error, res);

@@ -11,12 +11,12 @@ datasource db {
 }
 
 model Person {
-  id            Int         @id @default(autoincrement())
-  walletAddress String      @unique
-  tgId          String      @unique
-  roles         UserRole[]
-  WhiteList     WhiteList[]
-  events        Event[]
+  id              Int               @id @default(autoincrement())
+  walletAddress   String            @unique
+  tgId            String            @unique
+  roles           UserRole[]
+  ParticipantList ParticipantList[]
+  events          Event[]
 }
 
 model UserRole {
@@ -33,28 +33,23 @@ model Role {
   roles UserRole[]
 }
 
-model NftList {
-  id          Int       @id @default(autoincrement())
-  whiteList   WhiteList @relation(fields: [whiteListId], references: [id])
-  whiteListId Int       @unique
-  status      NftStatus @relation(fields: [statusId], references: [id])
-  statusId    Int
-}
-
-model WhiteList {
-  id       Int      @id @default(autoincrement())
-  person   Person   @relation(fields: [personID], references: [id])
+model ParticipantList {
+  id       Int               @id @default(autoincrement())
+  person   Person            @relation(fields: [personID], references: [id])
   personID Int
-  event    Event    @relation(fields: [eventID], references: [id])
+  event    Event             @relation(fields: [eventID], references: [id])
   eventID  Int
-  nftList  NftList?
+  status   ParticipantStatus @relation(fields: [statusID], references: [id])
+  statusID Int               @default(1)
+
+  @@unique([personID, eventID])
 }
 
 model Event {
-  id                     Int         @id @default(autoincrement())
+  id                     Int               @id @default(autoincrement())
   name                   String
-  type                   EventType   @relation(fields: [typeId], references: [id])
-  status                 EventStatus @relation(fields: [statusId], references: [id])
+  type                   EventType         @relation(fields: [typeId], references: [id])
+  status                 EventStatus       @relation(fields: [statusId], references: [id])
   urlCover               String?
   description            String?
   isSBT                  Boolean
@@ -63,23 +58,24 @@ model Event {
   finished_at            DateTime?
   locationID             Int?
   // link to the ipfs
-  nftIpfsUrl             String      @unique
-  collectionAddr         String?     @unique
-  registeredParticipants Int         @default(0)
+  nftIpfsUrl             String            @unique
+  collectionAddr         String?           @unique
+  registeredParticipants Int               @default(0)
   countOfRewardTokens    Int
-  created_at             DateTime    @default(now())
-  updated_at             DateTime    @default(now())
-  typeId                 Int         @default(1)
-  statusId               Int         @default(1)
-  WhiteList              WhiteList[]
-  location               Location?   @relation(fields: [locationID], references: [id])
-  creator                Person      @relation(fields: [creatorID], references: [id])
+  created_at             DateTime          @default(now())
+  updated_at             DateTime          @default(now())
+  typeId                 Int               @default(1)
+  statusId               Int               @default(1)
+  approveLink            String?           @unique
+  ParticipantList        ParticipantList[]
+  location               Location?         @relation(fields: [locationID], references: [id])
+  creator                Person            @relation(fields: [creatorID], references: [id])
 }
 
-model NftStatus {
-  id       Int       @id @default(autoincrement())
-  status   String
-  nftLists NftList[]
+model ParticipantStatus {
+  id               Int               @id @default(autoincrement())
+  status           String            @unique
+  participantLists ParticipantList[]
 }
 
 model EventType {
@@ -96,19 +92,20 @@ model EventStatus {
 
 model Location {
   id        Int     @id @default(autoincrement())
-  addres    String?
+  address   String?
   room      String?
   isOffline Boolean
   link      String?
   events    Event[]
 }
 
-// enum EventType {
+// enum EventTypes {
 //   HAKATON
 //   CONFERENCE
 //   MEETING
 //   NOT_STATED
 // }
+
 //
 // enum EventStatus {
 //   CREATED
@@ -116,8 +113,8 @@ model Location {
 //   REGISTRATION_CLOSED
 //   FINISHED
 // }
-// enum NftStatus {
+// enum PartisipantStatus {
 //   REGISTRED
-//   IN_PROCESS
-//   COMPLETED
+//   APPROVED
+//   RECEIVED_NFT
 // }

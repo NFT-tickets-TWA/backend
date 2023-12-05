@@ -37,6 +37,7 @@ export class EventDTOResponse {
     typeId: number;
     @ApiProperty()
     statusId: number;
+    approveLink:string;
 }
 
 export class EventDTORequest {
@@ -74,6 +75,7 @@ export class EventDTORequest {
     @ApiProperty({
         required: false, default: 1, description: "status of event, default not registered"
     }) statusId ?: number;
+    approveLink:string;
 }
 
 export class EventDTO {
@@ -90,6 +92,7 @@ export class EventDTO {
     countOfRewardTokens: number;
     typeId ?: number;
     statusId ?: number;
+    approveLink:string;
 }
 
 export function convertEventDTORequestToEventDTO(event: EventDTORequest, id: number): EventDTO {

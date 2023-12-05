@@ -12,13 +12,14 @@ import {Prisma} from '@prisma/client'
 import {LocationService} from "./services/location.service";
 import {StatusEventService} from "./services/statusEvent.service";
 import {TypeEventService} from "./services/typeEvent.service";
-import {WhiteListService} from "./services/whiteList.service";
 import {EventController} from "./controllers/event.controller";
 import {PersonController} from "./controllers/person.controller";
-import {WhiteListController} from "./controllers/whiteList.controller";
+
 import {LocationController} from "./controllers/location.controller";
 import {TypeController} from "./controllers/type.controller";
 import {StatusController} from "./controllers/status.controller";
+import {ParticipantListController} from "./controllers/participantList.controller";
+import {ParticipantListService} from "./services/participantList.service";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -88,11 +89,7 @@ const authenticate = async (email: string, password: string) => {
                             {
                                 resource: {model: dm.models[8], client: prisma},
                                 options: {},
-                            },
-                            {
-                                resource: {model: dm.models[9], client: prisma},
-                                options: {},
-                            },
+                            }
                         ],
                     },
                     auth: {
@@ -109,8 +106,8 @@ const authenticate = async (email: string, password: string) => {
             },
         })),
     HttpModule],
-    controllers: [EventController, PersonController, WhiteListController, LocationController, TypeController,StatusController],
-    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService, WhiteListService],
+    controllers: [EventController, PersonController, ParticipantListController, LocationController, TypeController,StatusController],
+    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService, ParticipantListService],
 })
 export class AppModule {
 }

@@ -1,5 +1,5 @@
 import {Body, Controller, Get, Param, Post, Res} from "@nestjs/common";
-import {ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
+import {ApiBody, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {EventService} from "../services/event.service";
 import {
     ContractEvent
@@ -48,6 +48,9 @@ export class EventController {
     @Response500()
     async createEvent(@Body() eventDataRequest: EventDTORequest, @Res() res: Response) {
         console.log(eventDataRequest)
+        if(eventDataRequest.countOfRewardTokens<1){
+            return res.status(400).json({message: "countOfRewardTokens must be more than 1"});
+        }
         const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIpfsUrl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.isSBT);
         const id = this.personService.getPersonByTgId(eventDataRequest.creatorTgId).then(
             (person) => {
@@ -127,6 +130,28 @@ export class EventController {
         this.eventService.getEventByID(id).then(
             (data) => {
                 return res.status(200).json(data)
+            }
+        ).catch((error) => {
+            handlePrismaError(error, res);
+        })
+    }
+    @Post('approveLink')
+    @ApiOperation({summary: "update approve link by id",operationId:"updateApproveLink", tags:["event"]})
+    @ApiBody({schema:{
+            example:
+                {
+                    event_id:2,
+                    approve_link:"link"
+                }
+
+        }})
+    @Response400()
+    @Response500()
+    async updateApproveLink(@Body('event_id') id: number,@Body('approve_link') link:string, @Res() res: Response) {
+        console.log("request:approve link")
+        this.eventService.addApproveLink(id, link).then(
+            (data) => {
+                return res.status(200).json()
             }
         ).catch((error) => {
             handlePrismaError(error, res);

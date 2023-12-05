@@ -1,5 +1,5 @@
 import {ApiProperty, ApiResponse} from "@nestjs/swagger";
-import {EventStatus, EventType, Person, WhiteList} from "@prisma/client";
+import {EventStatus, EventType, Person, ParticipantList} from "@prisma/client";
 import {applyDecorators} from "@nestjs/common";
 
 
@@ -21,30 +21,23 @@ class UserRoleDTO {
     }
 }
 
-class NftListDTO {
-    id?: number;
-    whiteList: WhiteListDTO;
-    status: NftStatusDTO;
 
-    constructor(data: NftListDTO) {
-        Object.assign(this, data);
-    }
-}
-
-export class WhiteListDTO {
+export class ParticipantListDTO {
     id?: number
     @ApiProperty()
     personID: number
     @ApiProperty()
     eventID: number
+    @ApiProperty()
+    statusID: number;
 }
 
-class NftStatusDTO {
+class ParticipantStatusDTO {
     id?: number;
     status: string;
-    nftLists: NftListDTO[];
+    participantLists: ParticipantList[];
 
-    constructor(data: NftStatusDTO) {
+    constructor(data: ParticipantStatusDTO) {
         Object.assign(this, data);
     }
 }
