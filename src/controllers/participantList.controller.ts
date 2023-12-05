@@ -58,7 +58,7 @@ export class ParticipantListController {
     })
     @Response400()
     @Response500()
-    async approveParticipation(@Param("person_id") person_id: number, @Param("event_id") event_id: number, @Res() res: Response) {
+    async approveParticipation(@Body("person_id") person_id: number, @Body("event_id") event_id: number, @Res() res: Response) {
         console.log("request: approve person")
         this.participantList.approve(person_id, event_id).then((result) => {
             return res.status(200).json();
