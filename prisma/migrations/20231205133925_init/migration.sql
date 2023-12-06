@@ -21,21 +21,14 @@ CREATE TABLE "Role" (
 );
 
 -- CreateTable
-CREATE TABLE "NftList" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "whiteListId" INTEGER NOT NULL,
-    "statusId" INTEGER NOT NULL,
-    CONSTRAINT "NftList_whiteListId_fkey" FOREIGN KEY ("whiteListId") REFERENCES "WhiteList" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "NftList_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "NftStatus" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "WhiteList" (
+CREATE TABLE "ParticipantList" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "personID" INTEGER NOT NULL,
     "eventID" INTEGER NOT NULL,
-    CONSTRAINT "WhiteList_personID_fkey" FOREIGN KEY ("personID") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "WhiteList_eventID_fkey" FOREIGN KEY ("eventID") REFERENCES "Event" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "statusID" INTEGER NOT NULL DEFAULT 1,
+    CONSTRAINT "ParticipantList_personID_fkey" FOREIGN KEY ("personID") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "ParticipantList_eventID_fkey" FOREIGN KEY ("eventID") REFERENCES "Event" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "ParticipantList_statusID_fkey" FOREIGN KEY ("statusID") REFERENCES "ParticipantStatus" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -57,6 +50,7 @@ CREATE TABLE "Event" (
     "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "typeId" INTEGER NOT NULL DEFAULT 1,
     "statusId" INTEGER NOT NULL DEFAULT 1,
+    "approveLink" TEXT,
     CONSTRAINT "Event_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "EventType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Event_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "EventStatus" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Event_locationID_fkey" FOREIGN KEY ("locationID") REFERENCES "Location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -64,7 +58,7 @@ CREATE TABLE "Event" (
 );
 
 -- CreateTable
-CREATE TABLE "NftStatus" (
+CREATE TABLE "ParticipantStatus" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "status" TEXT NOT NULL
 );
@@ -84,7 +78,7 @@ CREATE TABLE "EventStatus" (
 -- CreateTable
 CREATE TABLE "Location" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "addres" TEXT,
+    "address" TEXT,
     "room" TEXT,
     "isOffline" BOOLEAN NOT NULL,
     "link" TEXT
@@ -97,10 +91,16 @@ CREATE UNIQUE INDEX "Person_walletAddress_key" ON "Person"("walletAddress");
 CREATE UNIQUE INDEX "Person_tgId_key" ON "Person"("tgId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "NftList_whiteListId_key" ON "NftList"("whiteListId");
+CREATE UNIQUE INDEX "ParticipantList_personID_eventID_key" ON "ParticipantList"("personID", "eventID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_nftIpfsUrl_key" ON "Event"("nftIpfsUrl");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_collectionAddr_key" ON "Event"("collectionAddr");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Event_approveLink_key" ON "Event"("approveLink");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ParticipantStatus_status_key" ON "ParticipantStatus"("status");

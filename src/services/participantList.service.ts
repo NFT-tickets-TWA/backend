@@ -18,7 +18,7 @@ export class ParticipantListService {
         });
     }
 
-    async approve(person_id: number, event_id: number) {
+    async changeStatus(person_id: number, event_id: number,newStatus:string){
         return this.prisma.participantList.update({
             where: {
                 personID_eventID:
@@ -30,7 +30,7 @@ export class ParticipantListService {
             data: {
                 status: {
                     connect: {
-                        status: "APPROVED"
+                        status: newStatus
                     }
                 }
             }
@@ -44,6 +44,21 @@ export class ParticipantListService {
                     eventID: toNumber(event_id),
                     status: {
                         status: "APPROVED"
+                    }
+                },
+                select:{
+                    personID:true,
+                    person:{
+                        select: {
+                            walletAddress: true
+                        }
+                    },
+                    eventID:true,
+                    event:{
+                        select:{
+                            collectionAddr:true,
+                            isSBT:true
+                        }
                     }
                 }
             }

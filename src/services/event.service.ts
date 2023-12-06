@@ -59,6 +59,16 @@ export class EventService {
             }
         )
     }
+    async getEventByLink(link: string) {
+        console.log("get event by link " + link)
+        return this.prisma.event.findUnique(
+            {
+                where: {
+                    approveLink:link
+                }
+            }
+        )
+    }
 
     async addApproveLink(id: number, link: string) {
         console.log("add approve link")

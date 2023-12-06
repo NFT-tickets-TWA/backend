@@ -57,6 +57,7 @@ export class EventController {
                 const eventData = convertEventDTORequestToEventDTO(eventDataRequest, person.id)
                 this.eventService.createEvent(eventData).then((data) => {
                         createInternalEvent(contractEvent).then((response) => {
+                            console.log(response)
                             if (response.status == 200) {
                                 this.eventService.updateCollectionAdr(data.id, response.hash).then(() => {
                                         return res.status(200).json(data.id);
@@ -128,6 +129,21 @@ export class EventController {
     async getEventByID(@Param('id') id: number, @Res() res: Response) {
         console.log("request")
         this.eventService.getEventByID(id).then(
+            (data) => {
+                return res.status(200).json(data)
+            }
+        ).catch((error) => {
+            handlePrismaError(error, res);
+        })
+    }
+    @Get('event_by_link/:link')
+    @ApiOperation({summary: "get event by link",operationId:"getEventByLink", tags:["event"]})
+    @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
+    @Response400()
+    @Response500()
+    async getEventByLink(@Param('link') link: string, @Res() res: Response) {
+        console.log("request")
+        this.eventService.getEventByLink(link).then(
             (data) => {
                 return res.status(200).json(data)
             }

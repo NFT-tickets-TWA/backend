@@ -25,6 +25,9 @@ export class PersonService {
     console.log(tg);
     return this.prisma.person.findMany(
         {
+          where:{
+            tgId:tg
+          },
           select:{
             id: true,
             walletAddress:true,
