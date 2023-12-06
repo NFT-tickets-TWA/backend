@@ -66,6 +66,7 @@ export class EventStatusDTO {
 }
 
 export class LocationDTO {
+    @ApiProperty()
     id?: number;
     @ApiProperty()
     address?: string;
