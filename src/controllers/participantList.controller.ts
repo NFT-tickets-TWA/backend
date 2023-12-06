@@ -27,17 +27,19 @@ export class ParticipantListController {
         }
     })
     @ApiOkResponse({type: Boolean, description: "return true if created in another case false"})
-    async registerPersonOnEvent(@Body("person_id") person_id: number, @Body("person_id") event_id: number, @Res() res: Response) {
+    async registerPersonOnEvent(@Body("person_id") person_id: number, @Body("event_id") event_id: number, @Res() res: Response) {
         console.log("request: register user on event")
         this.eventService.incrementParticipants(event_id).then(() => {
                 this.participantList.register(person_id, event_id).then((result) => {
                     return res.status(200).json(true);
                 })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.log(error)
                         return res.status(200).json(false);
                     })
             }
-        ).catch(() => {
+        ).catch((error) => {
+            console.log(error)
             return res.status(200).json(false);
         })
     }

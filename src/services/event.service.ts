@@ -69,6 +69,19 @@ export class EventService {
             }
         )
     }
+    async getFullEvent(id: number) {
+        console.log("get event with location by id " +id)
+        return this.prisma.event.findUnique(
+            {
+                where: {
+                    id:toNumber(id)
+                } ,
+                include:{
+                    location:true
+                }
+            }
+        )
+    }
 
     async addApproveLink(id: number, link: string) {
         console.log("add approve link")

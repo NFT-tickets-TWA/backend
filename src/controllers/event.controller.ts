@@ -18,7 +18,7 @@ export class EventController {
     }
 
     @Get()
-    @ApiOperation({summary: "returns all events in database", operationId: "getEvents", tags:["event"]})
+    @ApiOperation({summary: "returns all events in database", operationId: "getEvents", tags: ["event"]})
     @ApiOkResponse({type: EventDTOResponse, isArray: true, description: "array of events"})
     @Response400()
     @Response500()
@@ -42,13 +42,17 @@ export class EventController {
     }
 
     @Post()
-    @ApiOperation({summary: "create event contract and add it to the database", operationId: "createEvent", tags:["event", "person"]})
+    @ApiOperation({
+        summary: "create event contract and add it to the database",
+        operationId: "createEvent",
+        tags: ["event", "person"]
+    })
     @ApiOkResponse({type: Number, description: "return id of created event"})
     @Response400()
     @Response500()
     async createEvent(@Body() eventDataRequest: EventDTORequest, @Res() res: Response) {
         console.log(eventDataRequest)
-        if(eventDataRequest.countOfRewardTokens<1){
+        if (eventDataRequest.countOfRewardTokens < 1) {
             return res.status(400).json({message: "countOfRewardTokens must be more than 1"});
         }
         const contractEvent = new ContractEvent(eventDataRequest.name, eventDataRequest.nftIpfsUrl, this.generateSymbol(), eventDataRequest.countOfRewardTokens, eventDataRequest.isSBT);
@@ -89,9 +93,10 @@ export class EventController {
             handlePrismaError(error, res);
         })
     }
+
     @Get('events_by_tg/:id')
-    @ApiOperation({summary: "get events by user telegram id", operationId:"getEventsById", tags:["event"]})
-    @ApiOkResponse({ type:EventDTOResponse, isArray: true, description: "return array of events"})
+    @ApiOperation({summary: "get events by user telegram id", operationId: "getEventsById", tags: ["event"]})
+    @ApiOkResponse({type: EventDTOResponse, isArray: true, description: "return array of events"})
     @Response400()
     @Response500()
     async getEventsById(@Param('id') id: string, @Res() res: Response) {
@@ -104,8 +109,9 @@ export class EventController {
             handlePrismaError(error, res);
         })
     }
+
     @Get('events_by_name/:name')
-    @ApiOperation({summary: "get events by name", operationId:"getEventsByName",tags:["event"]})
+    @ApiOperation({summary: "get events by name", operationId: "getEventsByName", tags: ["event"]})
     @ApiOkResponse({
         isArray: true, type: EventDTOResponse, description: "return array of events"
     })
@@ -121,8 +127,9 @@ export class EventController {
             handlePrismaError(error, res);
         })
     }
+
     @Get('event_by_id/:id')
-    @ApiOperation({summary: "get event by id",operationId:"getEventByID", tags:["event"]})
+    @ApiOperation({summary: "get event by id", operationId: "getEventByID", tags: ["event"]})
     @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
     @Response400()
     @Response500()
@@ -136,8 +143,9 @@ export class EventController {
             handlePrismaError(error, res);
         })
     }
+
     @Get('event_by_link/:link')
-    @ApiOperation({summary: "get event by link",operationId:"getEventByLink", tags:["event"]})
+    @ApiOperation({summary: "get event by link", operationId: "getEventByLink", tags: ["event"]})
     @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
     @Response400()
     @Response500()
@@ -151,23 +159,71 @@ export class EventController {
             handlePrismaError(error, res);
         })
     }
+
     @Post('approveLink')
-    @ApiOperation({summary: "update approve link by id",operationId:"updateApproveLink", tags:["event"]})
-    @ApiBody({schema:{
+    @ApiOperation({summary: "update approve link by id", operationId: "updateApproveLink", tags: ["event"]})
+    @ApiBody({
+        schema: {
             example:
                 {
-                    event_id:2,
-                    approve_link:"link"
+                    event_id: 2,
+                    approve_link: "link"
                 }
 
-        }})
+        }
+    })
     @Response400()
     @Response500()
-    async updateApproveLink(@Body('event_id') id: number,@Body('approve_link') link:string, @Res() res: Response) {
+    async updateApproveLink(@Body('event_id') id: number, @Body('approve_link') link: string, @Res() res: Response) {
         console.log("request:approve link")
         this.eventService.addApproveLink(id, link).then(
             (data) => {
                 return res.status(200).json()
+            }
+        ).catch((error) => {
+            handlePrismaError(error, res);
+        })
+    }
+
+    @Get('full_event_by_id/:id')
+    @ApiOkResponse({
+        schema: {
+            example: {
+                "id": 1,
+                "name": "test",
+                "urlCover": null,
+                "description": null,
+                "isSBT": false,
+                "creatorID": 1,
+                "started_at": null,
+                "finished_at": null,
+                "locationID": 1,
+                "nftIpfsUrl": "hhhhhhhhhhhhh",
+                "collectionAddr": null,
+                "registeredParticipants": 5,
+                "countOfRewardTokens": 5,
+                "created_at": "2023-12-05T18:37:29.990Z",
+                "updated_at": "2023-12-05T18:37:29.990Z",
+                "typeId": 1,
+                "statusId": 1,
+                "approveLink": "hhh",
+                "location": {
+                    "id": 1,
+                    "address": "d",
+                    "room": "d",
+                    "isOffline": false,
+                    "link": null
+                }
+            }
+        }
+    })
+    @Response400()
+    @Response500()
+    async getFullEvent(@Param('id') id: number, @Res() res: Response) {
+        console.log("request:get full event")
+        this.eventService.getFullEvent(id).then(
+            (data) => {
+                return res.status(200).json(data)
             }
         ).catch((error) => {
             handlePrismaError(error, res);
