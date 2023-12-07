@@ -144,7 +144,7 @@ export class EventController {
         })
     }
 
-    @Get('event_by_link')
+    @Post('event_by_link')
     @ApiOperation({summary: "get event by link", operationId: "getEventByLink", tags: ["event"]})
     @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
     @ApiBody({
