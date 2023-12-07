@@ -144,12 +144,19 @@ export class EventController {
         })
     }
 
-    @Get('event_by_link/:link')
+    @Get('event_by_link')
     @ApiOperation({summary: "get event by link", operationId: "getEventByLink", tags: ["event"]})
     @ApiOkResponse({type: EventDTOResponse, description: "return an event or null"})
+    @ApiBody({
+        schema: {
+            example: {
+                link: "http//dd/d//d/d"
+            }
+        }
+    })
     @Response400()
     @Response500()
-    async getEventByLink(@Param('link') link: string, @Res() res: Response) {
+    async getEventByLink(@Body('link') link: string, @Res() res: Response) {
         console.log("request")
         this.eventService.getEventByLink(link).then(
             (data) => {
