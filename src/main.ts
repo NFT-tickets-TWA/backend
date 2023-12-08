@@ -3,13 +3,23 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { PrismaService } from './services/prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 
 import * as dotenv from 'dotenv';
 import * as process from "process";
 import * as fs from "fs";
+import {printSchema} from "graphql/utilities";
+import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql";
+import {ApiResolver} from "./api/api.resolver";
 dotenv.config();
+async function generateSchema() {
+  const app = await NestFactory.create(GraphQLSchemaBuilderModule);
+  await app.init();
 
+  const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
+  const schema = await gqlSchemaFactory.create([ApiResolver]);
+  console.log(printSchema(schema));
+}
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   // prisma
@@ -26,7 +36,8 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
   fs.writeFileSync("./swagger-spec.json", JSON.stringify(document));
   SwaggerModule.setup("/api", app, document);
-  // await app.listen( process.env.SERVICE_PORT, process.env.HOST_NAME);
-  await app.listen(process.env.PORT || process.env.SERVICE_PORT, "0.0.0.0");
+  await app.listen( process.env.SERVICE_PORT, process.env.HOST_NAME);
+  // await app.listen(process.env.PORT || process.env.SERVICE_PORT, "0.0.0.0");
 }
 bootstrap();
+

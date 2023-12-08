@@ -2,16 +2,9 @@
 CREATE TABLE "Person" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "walletAddress" TEXT NOT NULL,
-    "tgId" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "UserRole" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "personID" INTEGER NOT NULL,
-    "roleID" INTEGER NOT NULL,
-    CONSTRAINT "UserRole_personID_fkey" FOREIGN KEY ("personID") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "UserRole_roleID_fkey" FOREIGN KEY ("roleID") REFERENCES "Role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "tgId" TEXT NOT NULL,
+    "roleId" INTEGER NOT NULL,
+    CONSTRAINT "Person_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
