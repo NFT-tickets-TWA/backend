@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {Person, Prisma} from '@prisma/client';
 import {PrismaService} from './prisma.service';
 import {PersonDTO, ParticipantListDTO} from "../stractures/stractures";
@@ -18,8 +18,54 @@ export class ParticipantListService {
         });
     }
 
-    async changeStatus(person_id: number, event_id: number,newStatus:string){
-        return this.prisma.participantList.update({
+    async changeStatus(person_id: number, event_id: number, newStatus: string, prevStatus?: string) {
+        if (!prevStatus) {
+            return this.prisma.participantList.update({
+                where: {
+                    personID_eventID:
+                        {
+                            personID: person_id,
+                            eventID: event_id
+                        }
+                },
+                data: {
+                    status: {
+                        connect: {
+                            status: newStatus
+                        }
+                    }
+                }
+            })
+        } else {
+            if((await this.getStatusByID(person_id, event_id)).status.status==prevStatus) {
+                return this.prisma.participantList.update({
+                    where: {
+                        personID_eventID:
+                            {
+                                personID: person_id,
+                                eventID: event_id
+                            }
+                    },
+                    data: {
+                        status: {
+                            connect: {
+                                status: newStatus
+                            }
+                        }
+                    }
+                })
+            } else{
+                throw new HttpException({
+                    status: HttpStatus.FORBIDDEN,
+                    error:  "the user wasn't registered",
+                }, HttpStatus.FORBIDDEN, {
+                    cause: "the user wasn't registered"
+                })
+            }
+        }
+    }
+    async getStatusByID(person_id: number, event_id:number){
+        return this.prisma.participantList.findUnique({
             where: {
                 personID_eventID:
                     {
@@ -27,14 +73,14 @@ export class ParticipantListService {
                         eventID: event_id
                     }
             },
-            data: {
-                status: {
-                    connect: {
-                        status: newStatus
+            select:{
+                status:{
+                    select:{
+                        status:true
                     }
                 }
             }
-        })
+        });
     }
 
     async getApprovedPersonsByEvent(event_id: number) {
@@ -46,18 +92,18 @@ export class ParticipantListService {
                         status: "APPROVED"
                     }
                 },
-                select:{
-                    personID:true,
-                    person:{
+                select: {
+                    personID: true,
+                    person: {
                         select: {
                             walletAddress: true
                         }
                     },
-                    eventID:true,
-                    event:{
-                        select:{
-                            collectionAddr:true,
-                            isSBT:true
+                    eventID: true,
+                    event: {
+                        select: {
+                            collectionAddr: true,
+                            isSBT: true
                         }
                     }
                 }

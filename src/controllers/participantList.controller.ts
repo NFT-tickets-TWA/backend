@@ -46,7 +46,7 @@ export class ParticipantListController {
 
     @Post('approve')
     @ApiOperation({
-        summary: "approve participant of user",
+        summary: "approve participant of user, return new status if approved and nu",
         operationId: "approveParticipation",
         tags: ["event", "person"]
     })
@@ -59,12 +59,48 @@ export class ParticipantListController {
                 }
         }
     })
+    @ApiOkResponse({
+        schema: {
+            example: {status:"APPROVE"}
+        }
+    })
     @Response400()
     @Response500()
     async approveParticipation(@Body("person_id") person_id: number, @Body("event_id") event_id: number, @Res() res: Response) {
         console.log("request: approve person")
         this.participantList.changeStatus(person_id, event_id, "APPROVED").then((result) => {
             return res.status(200).json();
+        })
+            .catch((error) => {
+                handlePrismaError(error, res);
+            })
+    }
+    @Post('status/:person_id/:event_id')
+    @ApiOperation({
+        summary: "return current person status",
+        operationId: "getStatus",
+        tags: ["event", "person"]
+    })
+    @ApiBody({
+        schema: {
+            example:
+                {
+                    person_id: 1,
+                    event_id: 2
+                }
+        }
+    })
+    @ApiOkResponse({
+        schema: {
+            example: {status:"APPROVE"}
+        }
+    })
+    @Response400()
+    @Response500()
+    async getStatus(@Body("person_id") person_id: number, @Body("event_id") event_id: number, @Res() res: Response) {
+        console.log("request: approve person")
+        this.participantList.getStatusByID(person_id, event_id).then((result) => {
+            return res.status(200).json(result);
         })
             .catch((error) => {
                 handlePrismaError(error, res);
