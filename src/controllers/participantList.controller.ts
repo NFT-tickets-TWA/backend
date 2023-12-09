@@ -75,7 +75,7 @@ export class ParticipantListController {
                 handlePrismaError(error, res);
             })
     }
-    @Post('status/:person_id/:event_id')
+    @Post('status')
     @ApiOperation({
         summary: "return current person status",
         operationId: "getStatus",
@@ -100,7 +100,7 @@ export class ParticipantListController {
     async getStatus(@Body("person_id") person_id: number, @Body("event_id") event_id: number, @Res() res: Response) {
         console.log("request: approve person")
         this.participantList.getStatusByID(person_id, event_id).then((result) => {
-            return res.status(200).json(result);
+            return res.status(200).json(result.status);
         })
             .catch((error) => {
                 handlePrismaError(error, res);
