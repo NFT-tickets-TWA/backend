@@ -1,19 +1,22 @@
 import {Injectable} from '@nestjs/common';
 import {CreateParticipantListInput} from './dto/create-participant-list.input';
 import {PrismaService} from "../prisma/prisma.service";
+import {EventService} from "../event/event.service";
 
 
 @Injectable()
 export class ParticipantListService {
-    constructor(private prisma: PrismaService) {
+    constructor(private prisma: PrismaService, private eventService:EventService) {
     }
 
 
-    create(createParticipantListInput: CreateParticipantListInput) {
-        // todo:count of pert
-        return this.prisma.participantList.create({
+    async create(createParticipantListInput: CreateParticipantListInput) {
+        const data = await this.prisma.participantList.create({
             data: createParticipantListInput
-        })
+        });
+        this.eventService.addParticipant(data.eventID).then(() => {
+            return data;
+        });
     }
 
 
@@ -74,7 +77,7 @@ export class ParticipantListService {
                 eventID: true,
                 event: {
                     select: {
-                        collectionAddr: true,
+                        contractAddress: true,
                         isSBT: true
                     }
                 }

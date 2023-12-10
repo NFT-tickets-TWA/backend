@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
 import { ParticipantListService } from './participant-list.service';
 import { ParticipantList } from './entities/participant-list.entity';
 import { CreateParticipantListInput } from './dto/create-participant-list.input';

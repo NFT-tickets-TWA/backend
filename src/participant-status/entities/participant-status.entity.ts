@@ -1,13 +1,10 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import {ParticipantList} from "../../participant-list/entities/participant-list.entity";
+import {ObjectType, Field, Int, ID} from '@nestjs/graphql';
 
 @ObjectType()
 export class ParticipantStatus {
-  @Field(() => Int)
+  @Field(() => ID)
   id: number;
   @Field(() => Int)
   status: string;
 
-  @Field(() => [ParticipantList])
-  participantLists: ParticipantList[];
 }

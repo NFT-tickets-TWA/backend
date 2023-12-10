@@ -1,17 +1,9 @@
 import {Module} from '@nestjs/common';
-
-
 import { HttpModule } from "@nestjs/axios";
-
-// import { SubredditService } from './subreddit.service';
-
 import {Prisma} from '@prisma/client'
-
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloDriver, ApolloDriverConfig} from "@nestjs/apollo";
-
 import {PrismaService} from "./prisma/prisma.service";
-
 import {PrismaModule} from "./prisma/prisma.module";
 import {PersonModule} from "./person/person.module";
 import { StatusModule } from './status/status.module';

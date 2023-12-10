@@ -1,7 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { LocationService } from './location.service';
 import { Location } from './entities/location.entity';
-import { Prisma } from '@prisma/client';
 import {CreateLocationInput} from "./create-location.input";
 
 

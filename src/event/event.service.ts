@@ -2,12 +2,8 @@ import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {CreateEventInput} from './dto/create-event.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {createInternalEvent} from "../contract/contract";
-import {ContractEvent} from "../stractures/stractures";
-import {readJsonFromDiskSync} from "tsconfig-paths/lib/filesystem";
-import {Event} from "./entities/event.entity";
+import {ContractEvent} from "../rest/util/responses";
 import {Prisma} from '@prisma/client';
-import {DefaultArgs} from '@prisma/client/runtime/library';
-import {PrismaSelect} from "../rest/uril/responses";
 
 
 @Injectable()
@@ -15,19 +11,21 @@ export class EventService {
     constructor(private prisma: PrismaService) {
     }
 
-    create(createEventInput: CreateEventInput, tgID: string) {
-       return  this.prisma.person.findUnique({
+    async create(createEventInput: CreateEventInput, tgID: string) {
+        const person = await this.prisma.person.findUnique({
             where: {
                 tgId: tgID
             }
-        }).then((person) => {
-
-            return this.prisma.event.create({
-                data: {
-                    ...createEventInput,
-                    creatorID: person.id
-                }
-            })
+        });
+        if(person==null){
+            throw new Error("there is no person with this tgID")
+        }
+        console.log(person)
+        return this.prisma.event.create({
+            data: {
+                ...createEventInput,
+                creatorID: person.id
+            }
         });
 
     }
@@ -41,38 +39,35 @@ export class EventService {
         return result;
     }
 
-    createEvent(createEventInput: CreateEventInput, tgID:string, args: { select: Prisma.EventSelect }) {
-
-        return this.create(createEventInput, tgID).then((event) => {
-            return createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT)).then((result) => {
-                    if (result.status == 200) {
-                        return this.addCollectionAddress(event.id, result.hash, args).then(() => {
-                              return event;
-                            }
-                        ).catch((error) => {
-                            console.log(error)
-                            this.deleteEvent(event.id).then(() => {
-                                    throw new HttpException("impossible to update collection address", HttpStatus.INTERNAL_SERVER_ERROR)
-
-                                }
-                            ).catch((error) => {
-                                console.log(error)
-                                throw new HttpException("impossible to update collection address, after that failed to delete crested event", HttpStatus.INTERNAL_SERVER_ERROR)
-                            })
-                        })
-
-                    } else {
-                        this.deleteEvent(event.id).then(() => {
-                                throw new HttpException(result.message, HttpStatus.INTERNAL_SERVER_ERROR)
-                            }
-                        ).catch((error) => {
-                            console.log(error)
-                            throw new HttpException(result.message, HttpStatus.INTERNAL_SERVER_ERROR)
-                        })
-                    }
+    async createEvent(createEventInput: CreateEventInput, tgID: string, args: { select: Prisma.EventSelect }) {
+        console.log("ss")
+        const event = await this.create(createEventInput, tgID);
+        const contractResponse = await createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT));
+        if (contractResponse.status == 200) {
+            return this.addContractAddress(event.id, contractResponse.address, args).then(() => {
+                    return event;
                 }
-            )
-        })
+            ).catch((error) => {
+                console.log(error);
+                this.deleteEvent(event.id).then(() => {
+                        throw new HttpException("impossible to update contract address", HttpStatus.INTERNAL_SERVER_ERROR);
+
+                    }
+                ).catch((error_1) => {
+                    console.log(error_1);
+                    throw new HttpException("impossible to update contract address, after that failed to delete crested event", HttpStatus.INTERNAL_SERVER_ERROR);
+                });
+            });
+
+        } else {
+            this.deleteEvent(event.id).then(() => {
+                    throw new HttpException(contractResponse.message, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            ).catch((error_2) => {
+                console.log(error_2);
+                throw new HttpException(contractResponse.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            });
+        }
     }
 
 
@@ -115,6 +110,18 @@ export class EventService {
             }, select: args.select
         })
     }
+    addParticipant(event_id:number){
+        return this.prisma.event.update({
+            where:{
+                id:event_id
+            },
+            data:{
+                registeredParticipants:{
+                    increment:1
+                }
+            }
+        })
+    }
 
     addApproveLink(eventID: number, approveLink: string, args: { select: Prisma.EventSelect }) {
         return this.prisma.event.update({
@@ -128,14 +135,13 @@ export class EventService {
         );
     }
 
-    addCollectionAddress(id: number, contractAddress: string, args: { select: Prisma.EventSelect }) {
-
+    addContractAddress(id: number, contractAddress: string, args: { select: Prisma.EventSelect }) {
         return this.prisma.event.update({
                 where: {
                     id: id
                 },
                 data: {
-                    collectionAddr: contractAddress
+                    contractAddress: contractAddress
                 },
                 select: args.select
             }

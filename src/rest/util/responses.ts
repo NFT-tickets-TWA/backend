@@ -8,12 +8,12 @@ import {parseResolveInfo, ResolveTree} from 'graphql-parse-resolve-info';
 export class CustomResponse {
     status: number;
     message: string;
-    hash: string
+    address: string
 
-    constructor(status, message, hash?) {
+    constructor(status:number, message:string, address?:string) {
         this.status = status;
         this.message = message;
-        this.hash = hash;
+        this.address = address;
     }
 }
 
@@ -32,9 +32,24 @@ export function Response500() {
         ApiResponse({
             status: 500,
             schema: {example: {message: 'message'}},
-            description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or smth unknown else"
+            description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or something unknown else"
         })
     );
+}
+export class ContractEvent {
+    name: string;
+    nftPattern: string;
+    symbol: string;
+    countOfRewardTokens: number;
+    SBTState: boolean;
+
+    constructor(name: string, url: string, symbol: string, countOfTokens: number, SBTState: boolean) {
+        this.name = name;
+        this.nftPattern = url;
+        this.symbol = symbol;
+        this.countOfRewardTokens = countOfTokens;
+        this.SBTState = SBTState;
+    }
 }
 export type PrismaSelect = {
     select: {
@@ -43,7 +58,7 @@ export type PrismaSelect = {
 };
 
 export const Relations = createParamDecorator(
-    (data: unknown, ctx: ExecutionContext) => {
+    (_data: unknown, ctx: ExecutionContext) => {
         const info = GqlExecutionContext.create(ctx).getInfo<GraphQLResolveInfo>();
         const ast = parseResolveInfo(info);
         return astToPrisma(Object.values((ast as ResolveTree).fieldsByTypeName)[0]);
@@ -65,7 +80,7 @@ export const astToPrisma = (ast: {
     };
 };
 
-export function handlePrismaError(error: any, res: Response): Response<any, Record<string, any>> {
+export function handlePrismaError(error: any, res: Response): Response {
     console.error(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError || error instanceof Prisma.PrismaClientValidationError || error instanceof Prisma.PrismaClientUnknownRequestError) {
         return res.status(400).json({message: error.message});

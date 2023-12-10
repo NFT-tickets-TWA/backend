@@ -1,7 +1,6 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { StatusService } from './status.service';
 import { Status } from './entities/status.entity';
-import {Prisma} from "@prisma/client";
 
 
 @Resolver(() => Status)

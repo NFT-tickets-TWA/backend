@@ -1,28 +1,27 @@
-import * as url from "url";
 import * as process from "process";
 
-import {ContractEvent} from '../stractures/stractures';
-import {CustomResponse} from "../stractures/response";
+import {ContractEvent} from '../rest/util/responses';
+import {CustomResponse} from "../rest/util/responses";
 import {ethers} from "ethers";
+import fs from "fs";
 
 require("dotenv").config();
 
-const privKey = process.env.PRIVATE_KEY;
+const privateKey = process.env.PRIVATE_KEY;
 const providerURL = process.env.PROVIDER_URL;
+const contractAddress = process.env.CONTRACT_ADDRESS;
 
 const provider = new ethers.providers.JsonRpcProvider(providerURL);
-const wallet = new ethers.Wallet(privKey, provider);
-const fs = require("fs");
-const contractAddress = process.env.CONTRACT_ADDRESS;
-const contents = fs.readFileSync("src/abi/parent.json");
-const contract = new ethers.Contract(contractAddress, JSON.parse(contents), wallet);
+const wallet = new ethers.Wallet(privateKey, provider);
+const parentABI:string = fs.readFileSync(process.env.PARENT_ABI_PATH).toString();
+const childABI:string = fs.readFileSync(process.env.CHILD_ABI_PATH).toString();
+const contract = new ethers.Contract(contractAddress, JSON.parse(parentABI), wallet);
 
-async function listenForEvent() {
+async function listenForEvent():Promise<string> {
     return new Promise((resolve, reject) => {
-        contract.on("newEvent", (id, name, addr, amount, _atatus) => {
+        contract.on("newEvent", (id, name, addr) => {
             resolve(addr);
         })
-        // Handle error event if needed
         contract.on('error', (error) => {
             reject(error);
         });
@@ -43,7 +42,7 @@ export async function createInternalEvent(event: ContractEvent) {
             event.SBTState
         );
         console.log("request sent");
-        var l = listenForEvent()
+        const l = listenForEvent()
         await createReceipt.wait();
         console.log("response received");
         return l.then((addr)=>{
@@ -53,10 +52,6 @@ export async function createInternalEvent(event: ContractEvent) {
             console.error(e);
             return new CustomResponse(520, "Failed to created event");
         })
-
-
-
-
     } catch (e) {
         console.error(e);
         return new CustomResponse(520, "Failed to created event");
@@ -68,10 +63,9 @@ export async function mintNft(walletAddress: string, contractAddress: string, is
     if (!walletAddress == undefined || contractAddress == undefined || isSbt == undefined) {
         return new CustomResponse(400, "Required data is missing");
     }
-    const contents = fs.readFileSync("src/abi/child.json");
     try {
-        const contract = new ethers.Contract(contractAddress, JSON.parse(contents), wallet);
-        let createReceipt = undefined;
+        const contract = new ethers.Contract(contractAddress, JSON.parse(childABI), wallet);
+        let createReceipt: { wait: () => any; };
         if (isSbt) {
             createReceipt = await contract.safeMintWithTokens(
                 walletAddress

@@ -59,7 +59,7 @@ model Event {
   locationID             Int?
   // link to the ipfs
   nftIpfsUrl             String            @unique
-  collectionAddr         String?           @unique
+  contractAddress        String?           @unique
   registeredParticipants Int               @default(0)
   countOfRewardTokens    Int
   created_at             DateTime          @default(now())

@@ -7,23 +7,23 @@ export class PersonService {
     constructor(private prisma: PrismaService) {
     }
 
-    async create(params: { data: Prisma.PersonCreateInput }): Promise<Person> {
+    async create(params: { data: Prisma.PersonCreateInput }, args: { select: Prisma.PersonSelect }): Promise<Person> {
         const { data } = params;
-        return this.prisma.person.create({ data });
+        return this.prisma.person.create({ data:data, select: args.select });
     }
 
-    findOne(id: number) {
+    findOne(id: number, args: { select: Prisma.PersonSelect }) {
         return this.prisma.person.findUnique({
             where: {
                 id: id
-            }
+            }, select: args.select
         });
     }
-    findOneByTg(id: string) {
+    findOneByTg(id: string, args: { select: Prisma.PersonSelect }) {
         return this.prisma.person.findUnique({
             where: {
                 tgId: id
-            }
+            }, select: args.select
         });
     }
 

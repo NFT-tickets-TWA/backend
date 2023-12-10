@@ -3,7 +3,7 @@ import {ApiOperation, ApiTags} from "@nestjs/swagger";
 import {Response} from "express";
 import {mintNft} from "../../contract/contract";
 import {ParticipantListService} from "../../participant-list/participant-list.service";
-import {handlePrismaError, Response400, Response500} from "../uril/responses";
+import {handlePrismaError, Response400, Response500} from "../util/responses";
 
 
 @ApiTags("participantList")
@@ -21,7 +21,7 @@ export class ParticipantListController {
         this.participantListService.getApprovedPersons(event_id).then((participants) => {
             const promises = [];
             participants.forEach((participant) => {
-                promises.push(this.mint(participant.personID, participant.eventID, participant.person.walletAddress, participant.event.collectionAddr, participant.event.isSBT, res));
+                promises.push(this.mint(participant.personID, participant.eventID, participant.person.walletAddress, participant.event.contractAddress, participant.event.isSBT));
             })
             Promise.all(promises).then(() => {
                     return res.status(200).json();
@@ -36,20 +36,17 @@ export class ParticipantListController {
             })
     }
 
-    async mint(person_id: number, event_id: number, walletAddress: string, contractAddress: string, isSbt: boolean, res) {
+    async mint(person_id: number, event_id: number, walletAddress: string, contractAddress: string, isSbt: boolean) {
         return mintNft(walletAddress, contractAddress, isSbt).then(
             (data) => {
                 console.log(data)
                 if (data.status == 200) {
-                    //chech error
-                    this.participantListService.sendNft(person_id, event_id);
+                   return  this.participantListService.sendNft(person_id, event_id);
                 } else {
-                    return res.status(data.status).json({message: data.message});
+                    throw new Error(data.message)
                 }
             }
-        ).catch((error) => {
-            handlePrismaError(error, res)
-        })
+        )
     }
 
 }

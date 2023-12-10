@@ -1,5 +1,4 @@
 import {ObjectType, Field, Int, GraphQLISODateTime, ID} from '@nestjs/graphql';
-import {ParticipantList} from "../../participant-list/entities/participant-list.entity";
 import {Location} from "../../location/entities/location.entity";
 
 @ObjectType()
@@ -25,7 +24,7 @@ export class Event {
     @Field(() => String)
     nftIpfsUrl: string;
     @Field(() => String)
-    collectionAddr: string
+    contractAddress: string
     @Field(() => Int)
     registeredParticipants: number
     @Field(() => Int)

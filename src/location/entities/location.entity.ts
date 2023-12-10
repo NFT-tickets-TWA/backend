@@ -1,9 +1,8 @@
-import {ObjectType, Field, Int} from '@nestjs/graphql';
-import {Event} from "../../event/entities/event.entity"
+import {ObjectType, Field, ID} from '@nestjs/graphql';
 
 @ObjectType()
 export class Location {
-    @Field(() => Int)
+    @Field(() => ID)
     id: number;
     @Field(() => String, {nullable:true})
     address?: string;
@@ -13,7 +12,4 @@ export class Location {
     isOffline:boolean;
     @Field(() => String, {nullable:true})
     link?:string;
-    @Field(() => [Event])
-    events: Event[];
-    // events    Event[]
 }
