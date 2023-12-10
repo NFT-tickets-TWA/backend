@@ -22,6 +22,7 @@ import { UserRoleModule } from './user-role/user-role.module';
 import { ParticipantStatusModule } from './participant-status/participant-status.module';
 import { ParticipantListModule } from './participant-list/participant-list.module';
 import { EventModule } from './event/event.module';
+import {ParticipantListController} from "./rest/controllers/controller";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -50,7 +51,8 @@ const authenticate = async (email: string, password: string) => {
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: true,
-            path:'/back'
+            path:'/back',
+            playground:true
 
             // include:[]
         }),
@@ -115,7 +117,7 @@ const authenticate = async (email: string, password: string) => {
             },
         })),
     HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, UserRoleModule, ParticipantStatusModule, ParticipantListModule, EventModule],
-    controllers: [],
+    controllers: [ParticipantListController],
     providers: []
 })
 export class AppModule {
