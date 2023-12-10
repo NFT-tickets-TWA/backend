@@ -10,15 +10,13 @@ import * as process from "process";
 import * as fs from "fs";
 import {printSchema} from "graphql/utilities";
 import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql";
-import {ApiResolver} from "./api/api.resolver";
+;
 dotenv.config();
 async function generateSchema() {
   const app = await NestFactory.create(GraphQLSchemaBuilderModule);
   await app.init();
 
   const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
-  const schema = await gqlSchemaFactory.create([ApiResolver]);
-  console.log(printSchema(schema));
 }
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });

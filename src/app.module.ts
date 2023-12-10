@@ -9,13 +9,19 @@ import {Prisma} from '@prisma/client'
 
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloDriver, ApolloDriverConfig} from "@nestjs/apollo";
-import {ApiResolver} from "./api/api.resolver";
-import {PersonsRepository} from "./persons.repository";
-import {PersonsService} from "./persons.service";
+
 import {PrismaService} from "./prisma/prisma.service";
-import {PersonsModule} from "./persons.module";
-import {ApiModule} from "./api/api.module";
+
 import {PrismaModule} from "./prisma/prisma.module";
+import {PersonModule} from "./person/person.module";
+import { StatusModule } from './status/status.module';
+import { TypeModule } from './type/type.module';
+import { RoleModule } from './role/role.module';
+import { LocationModule } from './location/location.module';
+import { UserRoleModule } from './user-role/user-role.module';
+import { ParticipantStatusModule } from './participant-status/participant-status.module';
+import { ParticipantListModule } from './participant-list/participant-list.module';
+import { EventModule } from './event/event.module';
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -86,6 +92,10 @@ const authenticate = async (email: string, password: string) => {
                             {
                                 resource: {model: dm.models[7], client: prisma},
                                 options: {},
+                            },
+                            {
+                                resource: {model: dm.models[8], client: prisma},
+                                options: {},
                             }
                         ],
                     },
@@ -102,7 +112,7 @@ const authenticate = async (email: string, password: string) => {
                 }
             },
         })),
-    HttpModule, PersonsModule, ApiModule, PrismaModule],
+    HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, UserRoleModule, ParticipantStatusModule, ParticipantListModule, EventModule],
     controllers: [],
     providers: []
 })
