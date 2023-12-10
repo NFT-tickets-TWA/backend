@@ -12,12 +12,7 @@ import {printSchema} from "graphql/utilities";
 import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql";
 ;
 dotenv.config();
-async function generateSchema() {
-  const app = await NestFactory.create(GraphQLSchemaBuilderModule);
-  await app.init();
 
-  const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
-}
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   // prisma
@@ -27,7 +22,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
       .setTitle('NFT-Tickets server')
       .setDescription('Main server')
-      .addServer("https://prisma-production-1488.up.railway.app")
+      .addServer("https://backend-production-299c.up.railway.app")
       .setVersion('0.1')
       .build();
   const document = SwaggerModule.createDocument(app, config);

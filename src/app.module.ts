@@ -50,6 +50,7 @@ const authenticate = async (email: string, password: string) => {
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: true,
+            path:'/back'
             // include:[]
         }),
       import('@adminjs/nestjs').then(({AdminModule}) => AdminModule.createAdminAsync({
