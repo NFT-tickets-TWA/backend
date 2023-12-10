@@ -18,7 +18,7 @@ export class LocationResolver {
     return this.locationService.findAll();
   }
 
-  @Query(() => Location, { name: 'locationsID' })
+  @Query(() => Location, { name: 'locationID' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.locationService.findOne(id);
   }
