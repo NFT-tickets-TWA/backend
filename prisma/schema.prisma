@@ -56,7 +56,7 @@ model Event {
   creatorID              Int
   started_at             DateTime
   finished_at            DateTime
-  locationID             Int
+  locationID             Int?
   // link to the ipfs
   nftIpfsUrl             String            @unique
   contractAddress        String?           @unique
