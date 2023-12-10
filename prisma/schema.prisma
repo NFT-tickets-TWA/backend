@@ -54,9 +54,9 @@ model Event {
   description            String?
   isSBT                  Boolean
   creatorID              Int
-  started_at             DateTime?
-  finished_at            DateTime?
-  locationID             Int?
+  started_at             DateTime
+  finished_at            DateTime
+  locationID             Int
   // link to the ipfs
   nftIpfsUrl             String            @unique
   contractAddress        String?           @unique
