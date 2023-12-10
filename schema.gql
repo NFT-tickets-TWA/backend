@@ -1,0 +1,122 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserRole {
+  id: Int!
+  person_id: Int!
+  role_id: Int!
+}
+
+type ParticipantList {
+  id: ID!
+  personID: Int!
+  eventID: Int!
+  statusID: Int!
+}
+
+type Location {
+  id: ID!
+  address: String
+  room: String
+  isOffline: Boolean!
+  link: String
+}
+
+type Event {
+  id: ID!
+  name: String!
+  urlCover: String
+  description: String
+  isSBT: Boolean!
+  creatorID: Int!
+  started_at: DateTime!
+  finished_at: DateTime!
+  locationID: Int
+  nftIpfsUrl: String!
+  contractAddress: String!
+  registeredParticipants: Int!
+  countOfRewardTokens: Int!
+  typeId: Int!
+  statusId: Int!
+  approveLink: Int
+  location: Location
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Person {
+  id: ID!
+  tgId: String!
+  roles: [UserRole!]!
+  ParticipantList: [ParticipantList!]!
+  events: [Event!]!
+}
+
+type Status {
+  id: ID!
+  status: String!
+}
+
+type Type {
+  id: Int!
+  type: String!
+}
+
+type Role {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  person(tgID: String!): Person!
+  status(id: Int!): Status!
+  type(id: Int!): Type!
+  role(id: Int!): Role!
+  location(id: Int!): Location!
+  participantList(input: CreateParticipantListInput!): String!
+  events: [Event!]!
+  event(id: Int!): Event!
+  eventsTG(tgID: String!): [Event!]!
+  eventLink(link: String!): Event!
+  eventsName(name: String!): [Event!]!
+}
+
+input CreateParticipantListInput {
+  personID: Int!
+  eventID: Int!
+}
+
+type Mutation {
+  createPerson(walletAddress: String!, tgId: String!): Person!
+  createLocation(createLocationInput: CreateLocationInput!): Location!
+  register(createParticipantListInput: CreateParticipantListInput!): ParticipantList!
+  approve(input: CreateParticipantListInput!): ParticipantList!
+  createEvent(input: CreateEventInput!, tgID: String!): Event!
+  addApproveLink(eventID: Float!, approveLink: String!): Event!
+}
+
+input CreateLocationInput {
+  address: String
+  room: String
+  isOffline: Boolean!
+  link: String
+}
+
+input CreateEventInput {
+  name: String!
+  urlCover: String
+  description: String
+  isSBT: Boolean!
+  started_at: DateTime!
+  finished_at: DateTime!
+  locationID: Int
+  nftIpfsUrl: String!
+  countOfRewardTokens: Int!
+  typeId: Int = 1
+  statusId: Int = 1
+  approveLink: Int
+}

@@ -15,6 +15,7 @@ import { ParticipantStatusModule } from './participant-status/participant-status
 import { ParticipantListModule } from './participant-list/participant-list.module';
 import { EventModule } from './event/event.module';
 import {ParticipantListController} from "./rest/controllers/controller";
+import {ApolloServerPluginLandingPageLocalDefault} from "@apollo/server/plugin/landingPage/default";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -42,9 +43,11 @@ const authenticate = async (email: string, password: string) => {
     imports: [
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
-            autoSchemaFile: true,
+            autoSchemaFile:'schema.gql',
             path:'/back',
-            playground:true
+            playground: false,
+            plugins: [ApolloServerPluginLandingPageLocalDefault()],
+
 
             // include:[]
         }),
