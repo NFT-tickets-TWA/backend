@@ -1,1 +1,1 @@
-{"openapi":"3.0.0","paths":{},"info":{"title":"NFT-Tickets server","description":"Main server","version":"0.1","contact":{}},"tags":[],"servers":[{"url":"https://prisma-production-1488.up.railway.app"}],"components":{"schemas":{}}}
+{"openapi":"3.0.0","paths":{},"info":{"title":"NFT-Tickets server","description":"Main server","version":"0.1","contact":{}},"tags":[],"servers":[{"url":"https://backend-production-299c.up.railway.app"}],"components":{"schemas":{}}}

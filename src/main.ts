@@ -14,7 +14,7 @@ import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql"
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, { cors: false });
   // prisma
   const prismaService = app.get(PrismaService);
   app.enableShutdownHooks();

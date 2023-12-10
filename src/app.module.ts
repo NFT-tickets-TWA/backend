@@ -51,6 +51,7 @@ const authenticate = async (email: string, password: string) => {
             driver: ApolloDriver,
             autoSchemaFile: true,
             path:'/back'
+
             // include:[]
         }),
       import('@adminjs/nestjs').then(({AdminModule}) => AdminModule.createAdminAsync({
