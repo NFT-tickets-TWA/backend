@@ -46,6 +46,7 @@ const authenticate = async (email: string, password: string) => {
             autoSchemaFile:'schema.gql',
             path:'/back',
             playground: false,
+            introspection:true,
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
 
 
