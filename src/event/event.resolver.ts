@@ -21,7 +21,7 @@ export class EventResolver {
         return this.eventService.findOne(args, relations);
     }
 
-    @Query(() => [Event], {name: 'eventCollectionByTG', description: "получение мероприятий по телеграмм id создателя"})
+    @Query(() => [Event], {name: 'eventCollection', description: "получение мероприятиий по его характеристикам"})
     findMany(@Args() whereArgs: FindManyEventArgs, @Relations() relations: { select: Prisma.EventSelect }) {
         return this.eventService.findMany(whereArgs, relations);
     }
