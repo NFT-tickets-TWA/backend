@@ -12,9 +12,9 @@ export class CreateEventInput {
   @Field(()=>Boolean)
   isSBT:boolean;
   @Field(()=>GraphQLISODateTime)
-  started_at:string;
+  startedAt:string;
   @Field(()=>GraphQLISODateTime)
-  finished_at:string;
+  finishedAt:string;
   @Field(()=>Int, {nullable:true})
   locationID?:number;
   @Field(()=>String)
@@ -22,9 +22,9 @@ export class CreateEventInput {
   @Field(()=>Int)
   countOfRewardTokens:number;
   @Field(()=>Int, {nullable:true, defaultValue:1})
-  typeId?:number;
+  typeID?:number;
   @Field(()=>Int, {nullable:true, defaultValue:1})
-  statusId?:number;
-  @Field(()=>Int, {nullable:true})
+  statusID?:number;
+  @Field(()=>String, {nullable:true})
   approveLink:string;
 }

@@ -8,7 +8,7 @@ export class Person{
   @Field(() => ID)
   id: PersonDB[`id`];
   @Field(() => String)
-  tgId: PersonDB[`tgId`];
+  tgID: PersonDB[`tgID`];
   @Field(() => [UserRole])
   roles: UserRole[];
   @Field(() => [ParticipantList])

@@ -8,12 +8,12 @@ export class RoleResolver {
   constructor(private readonly roleService: RoleService) {}
 
 
-  @Query(() => [Role], { name: 'role' })
+  @Query(() => [Role], { name: 'roleCollection' })
   findAll() {
     return this.roleService.findAll();
   }
 
-  @Query(() => Role, { name: 'role' })
+  @Query(() => Role, { name: 'roleByID' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.roleService.findOne(id);
   }

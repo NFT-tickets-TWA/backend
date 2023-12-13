@@ -4,8 +4,8 @@
 
 type UserRole {
   id: Int!
-  person_id: Int!
-  role_id: Int!
+  personID: Int!
+  roleID: Int!
 }
 
 type ParticipantList {
@@ -20,26 +20,38 @@ type Location {
   address: String
   room: String
   isOffline: Boolean!
+
+  """ссылка на мероприятие, если оно онлайн"""
   link: String
 }
 
 type Event {
   id: ID!
   name: String!
+
+  """ссылка на обложку"""
   urlCover: String
   description: String
   isSBT: Boolean!
   creatorID: Int!
-  started_at: DateTime!
-  finished_at: DateTime!
+
+  """начало мероприятия"""
+  startedAt: DateTime!
+
+  """конец мероприятия"""
+  finishedAt: DateTime!
   locationID: Int
+
+  """ссылка на ipfs"""
   nftIpfsUrl: String!
-  contractAddress: String!
+
+  """количество зарегестрированных пользователей"""
   registeredParticipants: Int!
-  countOfRewardTokens: Int!
-  typeId: Int!
-  statusId: Int!
-  approveLink: Int
+  typeID: Int!
+  statusID: Int!
+
+  """ссылка для подтверждения регестрации"""
+  approveLink: String
   location: Location
 }
 
@@ -50,39 +62,59 @@ scalar DateTime
 
 type Person {
   id: ID!
-  tgId: String!
+  tgID: String!
   roles: [UserRole!]!
   ParticipantList: [ParticipantList!]!
   events: [Event!]!
 }
 
+"""статус мероприятия"""
 type Status {
   id: ID!
   status: String!
 }
 
+"""тип мероприятия"""
 type Type {
   id: Int!
   type: String!
 }
 
+"""роли людей"""
 type Role {
   id: ID!
   name: String!
 }
 
 type Query {
-  person(tgID: String!): Person!
-  status(id: Int!): Status!
-  type(id: Int!): Type!
-  role(id: Int!): Role!
-  location(id: Int!): Location!
-  participantList(input: CreateParticipantListInput!): String!
-  events: [Event!]!
-  event(id: Int!): Event!
-  eventsTG(tgID: String!): [Event!]!
-  eventLink(link: String!): Event!
-  eventsName(name: String!): [Event!]!
+  personByID(id: Int!): Person!
+  personByTgID(tgID: String!): Person!
+  statusCollection: [Status!]!
+  statusByID(id: Int!): Status!
+  typeCollection: [Type!]!
+  typeByID(id: Int!): Type!
+  roleCollection: [Role!]!
+  roleByID(id: Int!): Role!
+  locationCollection: [Location!]!
+  locationByID(id: Int!): Location!
+
+  """получение статуса участника на данном мероприятии"""
+  status(input: CreateParticipantListInput!): String!
+
+  """получение всех мероприятий"""
+  eventCollection: [Event!]!
+
+  """получение мероприятия по его id"""
+  eventByID(id: Int!): Event!
+
+  """получение мероприятий по телеграмм id создателя"""
+  eventCollectionByTG(tgID: String!): [Event!]!
+
+  """получение мероприятия по подтверждающей участие ссылке"""
+  eventByLink(link: String!): Event!
+
+  """получение всех мероприятий с данным именем"""
+  eventCollectionByName(name: String!): [Event!]!
 }
 
 input CreateParticipantListInput {
@@ -91,11 +123,26 @@ input CreateParticipantListInput {
 }
 
 type Mutation {
-  createPerson(walletAddress: String!, tgId: String!): Person!
+  createPerson(walletAddress: String!, tgID: String!): Person!
+
+  """создание новой локации"""
   createLocation(createLocationInput: CreateLocationInput!): Location!
+
+  """регистрация человека на мероприятие"""
   register(createParticipantListInput: CreateParticipantListInput!): ParticipantList!
+
+  """подтверждение участия участника в мероприятии"""
   approve(input: CreateParticipantListInput!): ParticipantList!
-  createEvent(input: CreateEventInput!, tgID: String!): Event!
+
+  """создание мероприятия"""
+  createEvent(
+    input: CreateEventInput!
+
+    """телеграмм id создателя мероприятия"""
+    tgID: String!
+  ): Event!
+
+  """добавление подтверждающей ссылки"""
   addApproveLink(eventID: Float!, approveLink: String!): Event!
 }
 
@@ -111,12 +158,12 @@ input CreateEventInput {
   urlCover: String
   description: String
   isSBT: Boolean!
-  started_at: DateTime!
-  finished_at: DateTime!
+  startedAt: DateTime!
+  finishedAt: DateTime!
   locationID: Int
   nftIpfsUrl: String!
   countOfRewardTokens: Int!
-  typeId: Int = 1
-  statusId: Int = 1
-  approveLink: Int
+  typeID: Int = 1
+  statusID: Int = 1
+  approveLink: String
 }

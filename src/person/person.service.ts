@@ -22,7 +22,7 @@ export class PersonService {
     findOneByTg(id: string, args: { select: Prisma.PersonSelect }) {
         return this.prisma.person.findUnique({
             where: {
-                tgId: id
+                tgID: id
             }, select: args.select
         });
     }

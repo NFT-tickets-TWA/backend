@@ -7,7 +7,7 @@ export class Event {
     id: number;
     @Field(() => String)
     name: string;
-    @Field(() => String, {nullable: true})
+    @Field(() => String, {nullable: true, description:"ссылка на обложку"})
     urlCover: string;
     @Field(() => String, {nullable: true})
     description: string;
@@ -15,27 +15,22 @@ export class Event {
     isSBT: boolean;
     @Field(() => Int)
     creatorID: number;
-    @Field(() => GraphQLISODateTime)
-    started_at: Date;
-    @Field(() => GraphQLISODateTime)
-    finished_at: Date;
+    @Field(() => GraphQLISODateTime, {description:"начало мероприятия"})
+    startedAt: Date;
+    @Field(() => GraphQLISODateTime, {description:"конец мероприятия"})
+    finishedAt: Date;
     @Field(() => Int, {nullable: true})
     locationID: number;
-    @Field(() => String)
+    @Field(() => String, {description:"ссылка на ipfs"})
     nftIpfsUrl: string;
-    @Field(() => String)
-    contractAddress: string
-    @Field(() => Int)
+    @Field(() => Int, {description:"количество зарегестрированных пользователей"})
     registeredParticipants: number
     @Field(() => Int)
-    countOfRewardTokens: number
+    typeID: number
     @Field(() => Int)
-    typeId: number
-    @Field(() => Int)
-    statusId: number
-    @Field(() => Int, {nullable: true})
+    statusID: number
+    @Field(() => String, {nullable: true, description:"ссылка для подтверждения регестрации"})
     approveLink: string
     @Field(() => Location, {nullable: true})
     location: Location
-
 }

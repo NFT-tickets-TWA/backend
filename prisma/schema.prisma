@@ -13,7 +13,7 @@ datasource db {
 model Person {
   id              Int               @id @default(autoincrement())
   walletAddress   String            @unique
-  tgId            String            @unique
+  tgID            String            @unique
   roles           UserRole[]
   ParticipantList ParticipantList[]
   events          Event[]
@@ -48,24 +48,24 @@ model ParticipantList {
 model Event {
   id                     Int               @id @default(autoincrement())
   name                   String
-  type                   EventType         @relation(fields: [typeId], references: [id])
-  status                 EventStatus       @relation(fields: [statusId], references: [id])
+  type                   EventType         @relation(fields: [typeID], references: [id])
+  status                 EventStatus       @relation(fields: [statusID], references: [id])
   urlCover               String?
   description            String?
   isSBT                  Boolean
   creatorID              Int
-  started_at             DateTime
-  finished_at            DateTime
+  startedAt              DateTime
+  finishedAt             DateTime
   locationID             Int?
   // link to the ipfs
   nftIpfsUrl             String            @unique
   contractAddress        String?           @unique
   registeredParticipants Int               @default(0)
   countOfRewardTokens    Int
-  created_at             DateTime          @default(now())
-  updated_at             DateTime          @default(now())
-  typeId                 Int               @default(1)
-  statusId               Int               @default(1)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @default(now())
+  typeID                 Int               @default(1)
+  statusID               Int               @default(1)
   approveLink            String?           @unique
   ParticipantList        ParticipantList[]
   location               Location?         @relation(fields: [locationID], references: [id])

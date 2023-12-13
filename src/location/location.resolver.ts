@@ -8,17 +8,17 @@ import {CreateLocationInput} from "./create-location.input";
 export class LocationResolver {
   constructor(private readonly locationService: LocationService) {}
 
-  @Mutation(() => Location)
+  @Mutation(() => Location, {description: "создание новой локации"})
   createLocation(@Args('createLocationInput') createLocationInput: CreateLocationInput) {
     return this.locationService.create(createLocationInput);
   }
 
-  @Query(() => [Location], { name: 'locations' })
+  @Query(() => [Location], { name: 'locationCollection' })
   findAll() {
     return this.locationService.findAll();
   }
 
-  @Query(() => Location, { name: 'locationID' })
+  @Query(() => Location, { name: 'locationByID' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.locationService.findOne(id);
   }

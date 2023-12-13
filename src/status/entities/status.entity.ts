@@ -1,6 +1,6 @@
 import {ObjectType, Field, ID} from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType({description:"статус мероприятия"})
 export class Status {
     @Field(() => ID)
     id: number;

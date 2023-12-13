@@ -11,22 +11,22 @@ export class PersonResolver {
 
     @Mutation(() => Person)
     createPerson(@Args({name: `walletAddress`, type: () => String}) walletAddress: string,
-                 @Args({name: `tgId`, type: () => String}) tgId: string, @Relations() relations: { select: Prisma.PersonSelect }) {
+                 @Args({name: `tgID`, type: () => String}) tgID: string, @Relations() relations: { select: Prisma.PersonSelect }) {
 
         return this.personService.create({
             data: {
                 walletAddress,
-                tgId
+                tgID
             },
         }, relations);
 
     }
 
-    @Query(() => Person, {name: 'person'})
+    @Query(() => Person, {name: 'personByID'})
     findOne(@Args('id', {type: () => Int}) id: number, @Relations() relations: { select: Prisma.PersonSelect }) {
         return this.personService.findOne(id, relations);
     }
-    @Query(() => Person, {name: 'person'})
+    @Query(() => Person, {name: 'personByTgID'})
     findOneByTg(@Args('tgID', {type: () => String}) id: string, @Relations() relations: { select: Prisma.PersonSelect }) {
         return this.personService.findOneByTg(id, relations);
     }

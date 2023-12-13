@@ -14,7 +14,7 @@ export class EventService {
     async create(createEventInput: CreateEventInput, tgID: string) {
         const person = await this.prisma.person.findUnique({
             where: {
-                tgId: tgID
+                tgID: tgID
             }
         });
         if(person==null){
@@ -40,11 +40,11 @@ export class EventService {
     }
 
     async createEvent(createEventInput: CreateEventInput, tgID: string, args: { select: Prisma.EventSelect }) {
-        console.log("ss")
         const event = await this.create(createEventInput, tgID);
         const contractResponse = await createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT));
         if (contractResponse.status == 200) {
             return this.addContractAddress(event.id, contractResponse.address, args).then(() => {
+                console.log(event)
                     return event;
                 }
             ).catch((error) => {
@@ -89,7 +89,7 @@ export class EventService {
         return this.prisma.event.findMany({
             where: {
                 creator: {
-                    tgId: tgID
+                    tgID: tgID
                 }
             }, select: args.select
         })
@@ -110,10 +110,10 @@ export class EventService {
             }, select: args.select
         })
     }
-    addParticipant(event_id:number){
+    addParticipant(eventID:number){
         return this.prisma.event.update({
             where:{
-                id:event_id
+                id:eventID
             },
             data:{
                 registeredParticipants:{

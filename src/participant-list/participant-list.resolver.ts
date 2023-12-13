@@ -8,17 +8,17 @@ import { CreateParticipantListInput } from './dto/create-participant-list.input'
 export class ParticipantListResolver {
   constructor(private readonly participantListService: ParticipantListService) {}
 
-  @Mutation(() => ParticipantList, {name:'register'})
+  @Mutation(() => ParticipantList, {name:'register', description: "регистрация человека на мероприятие"})
   createParticipantList(@Args('createParticipantListInput') createParticipantListInput: CreateParticipantListInput) {
     return this.participantListService.create(createParticipantListInput);
   }
 
-  @Query(() => String, { name: 'participantList' })
+  @Query(() => String, { name: 'status', description: "получение статуса участника на данном мероприятии"})
   getCurrentStatus(@Args('input') input: CreateParticipantListInput) {
     return this.participantListService.getCurrentStatus(input.personID, input.eventID);
   }
 
-  @Mutation(() => ParticipantList, {name:'approve'})
+  @Mutation(() => ParticipantList, {name:'approve', description: "подтверждение участия участника в мероприятии"})
   approve(@Args('input') input: CreateParticipantListInput) {
     return this.participantListService.approve(input.personID, input.eventID);
   }

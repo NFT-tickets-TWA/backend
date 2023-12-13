@@ -7,12 +7,12 @@ import { Status } from './entities/status.entity';
 export class StatusResolver {
   constructor(private readonly statusService: StatusService) {}
 
-  @Query(() => [Status], { name: 'status' })
+  @Query(() => [Status], { name: 'statusCollection' })
   findAll() {
     return this.statusService.findAll();
   }
 
-  @Query(() => Status, { name: 'status' })
+  @Query(() => Status, { name: 'statusByID' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.statusService.findOne(id);
   }
