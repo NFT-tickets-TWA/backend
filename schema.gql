@@ -73,9 +73,6 @@ type Query {
   """получение статуса участника на данном мероприятии"""
   status(input: CreateParticipantListInput!): String!
 
-  """получение всех мероприятий"""
-  eventCollection: [Event!]!
-
   """получение мероприятия по его характеристикам"""
   event(where: EventWhereUniqueInput!): Event
 
