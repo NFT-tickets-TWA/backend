@@ -14,13 +14,13 @@ export class Event {
     description: EventDB["description"];
     @Field(() => Boolean)
     isSBT: EventDB["isSBT"];
-    @Field(() => Int)
+    @Field(() => ID)
     creatorID: EventDB["creatorID"];
     @Field(() => GraphQLISODateTime, {description:"начало мероприятия"})
     startedAt: EventDB["startedAt"];
     @Field(() => GraphQLISODateTime, {description:"конец мероприятия"})
     finishedAt: EventDB["finishedAt"];
-    @Field(() => Int, {nullable: true})
+    @Field(() => ID, {nullable: true})
     locationID: EventDB["locationID"];
     @Field(() => String, {description:"ссылка на ipfs"})
     nftIpfsUrl: EventDB["nftIpfsUrl"];

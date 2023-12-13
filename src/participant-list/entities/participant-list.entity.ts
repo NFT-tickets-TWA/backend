@@ -6,10 +6,10 @@ export class ParticipantList {
   @Field(() => ID)
   id: number;
 
-  @Field(() => Int)
+  @Field(() => ID)
   personID: number;
 
-  @Field(() => Int)
+  @Field(() => ID)
   eventID: number;
 
   @Field(() => String)
