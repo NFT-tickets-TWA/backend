@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {PrismaService} from "../prisma/prisma.service";
+import {EventStatus, EventType} from "@prisma/client";
 
 @Injectable()
 export class RoleService {
@@ -8,15 +9,7 @@ export class RoleService {
   }
 
   findAll() {
-    return this.prisma.role.findMany({});
-  }
-
-  findOne(id: number) {
-    return this.prisma.role.findUnique({
-      where:{
-        id:id
-      }
-    })
+    return Object.keys(EventType);
   }
 
 }

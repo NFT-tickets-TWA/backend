@@ -4,8 +4,6 @@ import { InputType, Field } from '@nestjs/graphql';
 export class CreateLocationInput {
   @Field(() => String, {nullable:true})
   address?: string;
-  @Field(() => String, {nullable:true})
-  room?: string;
   @Field(() => Boolean)
   isOffline:boolean;
   @Field(() => String, {nullable:true})

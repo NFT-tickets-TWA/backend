@@ -6,8 +6,6 @@ export class Location {
     id: number;
     @Field(() => String, {nullable:true})
     address?: string;
-    @Field(() => String, {nullable:true})
-    room?: string;
     @Field(() => Boolean)
     isOffline:boolean;
     @Field(() => String, {nullable:true, description: "ссылка на мероприятие, если оно онлайн"})

@@ -1,14 +1,18 @@
 import {InputType, Int, Field, GraphQLISODateTime} from '@nestjs/graphql';
-
+import {Event as EventDB, EventStatus, EventType} from '@prisma/client';
 
 @InputType()
 export class CreateEventInput {
   @Field(()=>String)
   name:string;
+  @Field(()=>String, {nullable:true, defaultValue:"NOT_STATED"})
+  type?:EventType;
+  @Field(()=>String, {nullable:true, defaultValue:"REGISTRATION_CLOSED"})
+  status?:EventStatus;
   @Field(()=>String, {nullable:true})
-  urlCover:string;
+  urlCover?:string;
   @Field(()=>String, {nullable:true})
-  description:string;
+  description?:string;
   @Field(()=>Boolean)
   isSBT:boolean;
   @Field(()=>GraphQLISODateTime)
@@ -21,10 +25,6 @@ export class CreateEventInput {
   nftIpfsUrl:string;
   @Field(()=>Int)
   countOfRewardTokens:number;
-  @Field(()=>Int, {nullable:true, defaultValue:1})
-  typeID?:number;
-  @Field(()=>Int, {nullable:true, defaultValue:1})
-  statusID?:number;
   @Field(()=>String, {nullable:true})
   approveLink:string;
 }

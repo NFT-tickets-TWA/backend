@@ -2,23 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserRole {
-  id: Int!
-  personID: Int!
-  roleID: Int!
-}
-
 type ParticipantList {
   id: ID!
   personID: Int!
   eventID: Int!
-  statusID: Int!
+  status: String!
 }
 
 type Location {
   id: ID!
   address: String
-  room: String
   isOffline: Boolean!
 
   """ссылка на мероприятие, если оно онлайн"""
@@ -47,8 +40,8 @@ type Event {
 
   """количество зарегестрированных пользователей"""
   registeredParticipants: Int!
-  typeID: Int!
-  statusID: Int!
+  type: String!
+  status: String!
 
   """ссылка для подтверждения регестрации"""
   approveLink: String
@@ -63,38 +56,17 @@ scalar DateTime
 type Person {
   id: ID!
   tgID: String!
-  roles: [UserRole!]!
+  role: String!
   ParticipantList: [ParticipantList!]!
   events: [Event!]!
-}
-
-"""статус мероприятия"""
-type Status {
-  id: ID!
-  status: String!
-}
-
-"""тип мероприятия"""
-type Type {
-  id: Int!
-  type: String!
-}
-
-"""роли людей"""
-type Role {
-  id: ID!
-  name: String!
 }
 
 type Query {
   personByID(id: Int!): Person!
   personByTgID(tgID: String!): Person!
-  statusCollection: [Status!]!
-  statusByID(id: Int!): Status!
-  typeCollection: [Type!]!
-  typeByID(id: Int!): Type!
-  roleCollection: [Role!]!
-  roleByID(id: Int!): Role!
+  statusCollection: [String!]!
+  typeCollection: [String!]!
+  roleCollection: [String!]!
   locationCollection: [Location!]!
   locationByID(id: Int!): Location!
 
@@ -148,13 +120,14 @@ type Mutation {
 
 input CreateLocationInput {
   address: String
-  room: String
   isOffline: Boolean!
   link: String
 }
 
 input CreateEventInput {
   name: String!
+  type: String = "NOT_STATED"
+  status: String = "REGISTRATION_CLOSED"
   urlCover: String
   description: String
   isSBT: Boolean!
@@ -163,7 +136,5 @@ input CreateEventInput {
   locationID: Int
   nftIpfsUrl: String!
   countOfRewardTokens: Int!
-  typeID: Int = 1
-  statusID: Int = 1
   approveLink: String
 }

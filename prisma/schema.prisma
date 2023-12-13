@@ -1,12 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -14,33 +11,18 @@ model Person {
   id              Int               @id @default(autoincrement())
   walletAddress   String            @unique
   tgID            String            @unique
-  roles           UserRole[]
-  ParticipantList ParticipantList[]
+  role            Role              @default(PARTICIPANT)
   events          Event[]
-}
-
-model UserRole {
-  id       Int    @id @default(autoincrement())
-  person   Person @relation(fields: [personID], references: [id])
-  personID Int
-  role     Role   @relation(fields: [roleID], references: [id])
-  roleID   Int
-}
-
-model Role {
-  id    Int        @id @default(autoincrement())
-  name  String
-  roles UserRole[]
+  ParticipantList ParticipantList[]
 }
 
 model ParticipantList {
   id       Int               @id @default(autoincrement())
-  person   Person            @relation(fields: [personID], references: [id])
   personID Int
-  event    Event             @relation(fields: [eventID], references: [id])
   eventID  Int
-  status   ParticipantStatus @relation(fields: [statusID], references: [id])
-  statusID Int               @default(1)
+  status   ParticipantStatus @default(REGISTERED)
+  event    Event             @relation(fields: [eventID], references: [id])
+  person   Person            @relation(fields: [personID], references: [id])
 
   @@unique([personID, eventID])
 }
@@ -48,8 +30,8 @@ model ParticipantList {
 model Event {
   id                     Int               @id @default(autoincrement())
   name                   String
-  type                   EventType         @relation(fields: [typeID], references: [id])
-  status                 EventStatus       @relation(fields: [statusID], references: [id])
+  type                   EventType         @default(NOT_STATED)
+  status                 EventStatus       @default(REGISTRATION_OPENED)
   urlCover               String?
   description            String?
   isSBT                  Boolean
@@ -57,64 +39,47 @@ model Event {
   startedAt              DateTime
   finishedAt             DateTime
   locationID             Int?
-  // link to the ipfs
   nftIpfsUrl             String            @unique
   contractAddress        String?           @unique
   registeredParticipants Int               @default(0)
   countOfRewardTokens    Int
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @default(now())
-  typeID                 Int               @default(1)
-  statusID               Int               @default(1)
   approveLink            String?           @unique
-  ParticipantList        ParticipantList[]
-  location               Location?         @relation(fields: [locationID], references: [id])
   creator                Person            @relation(fields: [creatorID], references: [id])
-}
-
-model ParticipantStatus {
-  id               Int               @id @default(autoincrement())
-  status           String            @unique
-  participantLists ParticipantList[]
-}
-
-model EventType {
-  id     Int     @id @default(autoincrement())
-  type   String
-  events Event[]
-}
-
-model EventStatus {
-  id     Int     @id @default(autoincrement())
-  status String
-  events Event[]
+  location               Location?         @relation(fields: [locationID], references: [id])
+  ParticipantList        ParticipantList[]
 }
 
 model Location {
   id        Int     @id @default(autoincrement())
   address   String?
-  room      String?
   isOffline Boolean
   link      String?
   events    Event[]
 }
 
-// enum EventTypes {
-//   HAKATON
-//   CONFERENCE
-//   MEETING
-//   NOT_STATED
-// }
+enum EventType {
+  NOT_STATED
+  HAKATON
+  CONFERENCE
+  MEETING
+}
 
-//
-// enum EventStatus {
-//   CREATED
-//   REGISTRATION_OPENED
-//   REGISTRATION_CLOSED
-//   FINISHED
-// }
-// enum PartisipantStatus {
-//   REGISTRED
-//   APPROVED
-//   RECEIVED_NFT
-// }
+enum EventStatus {
+  CREATED
+  REGISTRATION_OPENED
+  REGISTRATION_CLOSED
+  FINISHED
+}
+
+enum ParticipantStatus {
+  REGISTERED
+  APPROVED
+  RECEIVED_NFT
+}
+
+enum Role {
+  ADMIN
+  PARTICIPANT
+}

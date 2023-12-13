@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {PrismaService} from "../prisma/prisma.service";
+import {EventStatus} from "@prisma/client";
+
 
 
 @Injectable()
@@ -8,16 +10,9 @@ export class StatusService {
   }
 
   findAll() {
-    return this.prisma.eventStatus.findMany({})
+    return Object.keys(EventStatus)
   }
 
-  findOne(id: number) {
-    return this.prisma.eventStatus.findUnique({
-      where:{
-        id:id
-      }
-    })
-  }
 
 
 }

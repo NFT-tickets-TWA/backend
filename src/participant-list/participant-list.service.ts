@@ -6,7 +6,7 @@ import {EventService} from "../event/event.service";
 
 @Injectable()
 export class ParticipantListService {
-    constructor(private prisma: PrismaService, private eventService:EventService) {
+    constructor(private prisma: PrismaService, private eventService: EventService) {
     }
 
 
@@ -29,11 +29,7 @@ export class ParticipantListService {
                 }
             },
             select: {
-                status: {
-                    select: {
-                        status: true
-                    }
-                }
+                status: true
             }
         });
     }
@@ -45,16 +41,10 @@ export class ParticipantListService {
                     personID: personID,
                     eventID: eventID
                 },
-                status: {
-                    status: "REGISTERED"
-                }
+                status: "REGISTERED"
             },
             data: {
-                status: {
-                    connect: {
-                        status: "APPROVE"
-                    }
-                }
+                status: "APPROVED"
             }
         })
     }
@@ -63,9 +53,8 @@ export class ParticipantListService {
         return this.prisma.participantList.findMany({
             where: {
                 eventID: eventID,
-                status: {
-                    status: "APPROVED"
-                }
+                status: "APPROVED"
+
             },
             select: {
                 personID: true,
@@ -95,11 +84,7 @@ export class ParticipantListService {
                 }
             },
             data: {
-                status: {
-                    connect: {
-                        status: "RECEIVED_NFT"
-                    }
-                }
+                status: "RECEIVED_NFT"
             }
         })
     }

@@ -1,6 +1,5 @@
 import {Field, ID, ObjectType} from "@nestjs/graphql";
 import { Person as PersonDB } from '@prisma/client';
-import {UserRole} from "../../user-role/entities/user-role.entity";
 import {ParticipantList} from "../../participant-list/entities/participant-list.entity";
 import {Event} from "../../event/entities/event.entity";
 @ObjectType()
@@ -9,8 +8,8 @@ export class Person{
   id: PersonDB[`id`];
   @Field(() => String)
   tgID: PersonDB[`tgID`];
-  @Field(() => [UserRole])
-  roles: UserRole[];
+  @Field(() => String)
+  role: string;
   @Field(() => [ParticipantList])
   ParticipantList: ParticipantList[];
   @Field(() => [Event])

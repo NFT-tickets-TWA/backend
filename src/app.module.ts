@@ -10,8 +10,6 @@ import { StatusModule } from './status/status.module';
 import { TypeModule } from './type/type.module';
 import { RoleModule } from './role/role.module';
 import { LocationModule } from './location/location.module';
-import { UserRoleModule } from './user-role/user-role.module';
-import { ParticipantStatusModule } from './participant-status/participant-status.module';
 import { ParticipantListModule } from './participant-list/participant-list.module';
 import { EventModule } from './event/event.module';
 import {ParticipantListController} from "./rest/controllers/controller";
@@ -77,25 +75,6 @@ const authenticate = async (email: string, password: string) => {
                             }, {
                                 resource: {model: dm.models[3], client: prisma},
                                 options: {},
-                            },
-                            {
-                                resource: {model: dm.models[4], client: prisma},
-                                options: {},
-                            }, {
-                                resource: {model: dm.models[5], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[6], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[7], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[8], client: prisma},
-                                options: {},
                             }
                         ],
                     },
@@ -112,7 +91,7 @@ const authenticate = async (email: string, password: string) => {
                 }
             },
         })),
-    HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, UserRoleModule, ParticipantStatusModule, ParticipantListModule, EventModule],
+    HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, ParticipantListModule, EventModule],
     controllers: [ParticipantListController],
     providers: []
 })

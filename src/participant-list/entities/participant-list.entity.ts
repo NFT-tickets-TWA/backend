@@ -12,6 +12,6 @@ export class ParticipantList {
   @Field(() => Int)
   eventID: number;
 
-  @Field(() => Int)
-  statusID: number;
+  @Field(() => String)
+  status: string;
 }
