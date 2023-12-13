@@ -76,22 +76,119 @@ type Query {
   """получение всех мероприятий"""
   eventCollection: [Event!]!
 
-  """получение мероприятия по его id"""
-  eventByID(id: Int!): Event!
+  """получение мероприятия по его характеристикам"""
+  event(where: EventWhereUniqueInput!): Event
 
   """получение мероприятий по телеграмм id создателя"""
-  eventCollectionByTG(tgID: String!): [Event!]!
-
-  """получение мероприятия по подтверждающей участие ссылке"""
-  eventByLink(link: String!): Event!
-
-  """получение всех мероприятий с данным именем"""
-  eventCollectionByName(name: String!): [Event!]!
+  eventCollectionByTG(where: EventWhereInput, orderBy: [EventOrderByWithRelationInput!], cursor: EventWhereUniqueInput, take: Int, skip: Int, distinct: [EventScalarFieldEnum!]): [Event!]!
 }
 
 input CreateParticipantListInput {
   personID: Int!
   eventID: Int!
+}
+
+input EventWhereUniqueInput {
+  id: Int
+  approveLink: String
+}
+
+input EventWhereInput {
+  name: String
+  creator: PersonRelationFilter
+}
+
+input PersonRelationFilter {
+  is: PersonWhereInput
+}
+
+input PersonWhereInput {
+  tgID: String
+}
+
+input EventOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  type: SortOrder
+  status: SortOrder
+  urlCover: SortOrderInput
+  description: SortOrderInput
+  isSBT: SortOrder
+  creatorID: SortOrder
+  startedAt: SortOrder
+  finishedAt: SortOrder
+  locationID: SortOrderInput
+  nftIpfsUrl: SortOrder
+  contractAddress: SortOrderInput
+  registeredParticipants: SortOrder
+  countOfRewardTokens: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  approveLink: SortOrderInput
+  creator: PersonOrderByWithRelationInput
+  location: LocationOrderByWithRelationInput
+  ParticipantList: ParticipantListOrderByRelationAggregateInput
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input SortOrderInput {
+  sort: SortOrder!
+  nulls: NullsOrder
+}
+
+enum NullsOrder {
+  first
+  last
+}
+
+input PersonOrderByWithRelationInput {
+  id: SortOrder
+  walletAddress: SortOrder
+  tgID: SortOrder
+  role: SortOrder
+  events: EventOrderByRelationAggregateInput
+  ParticipantList: ParticipantListOrderByRelationAggregateInput
+}
+
+input EventOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ParticipantListOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input LocationOrderByWithRelationInput {
+  id: SortOrder
+  address: SortOrderInput
+  isOffline: SortOrder
+  link: SortOrderInput
+  events: EventOrderByRelationAggregateInput
+}
+
+enum EventScalarFieldEnum {
+  id
+  name
+  type
+  status
+  urlCover
+  description
+  isSBT
+  creatorID
+  startedAt
+  finishedAt
+  locationID
+  nftIpfsUrl
+  contractAddress
+  registeredParticipants
+  countOfRewardTokens
+  createdAt
+  updatedAt
+  approveLink
 }
 
 type Mutation {

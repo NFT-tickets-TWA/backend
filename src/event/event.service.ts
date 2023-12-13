@@ -1,9 +1,11 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
 import {CreateEventInput} from './dto/create-event.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {createInternalEvent} from "../contract/contract";
 import {ContractEvent} from "../rest/util/responses";
 import {Prisma} from '@prisma/client';
+import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
+import {FindManyEventArgs} from "./dto/find-many-event.args";
 
 
 @Injectable()
@@ -17,7 +19,7 @@ export class EventService {
                 tgID: tgID
             }
         });
-        if(person==null){
+        if (person == null) {
             throw new Error("there is no person with this tgID")
         }
         console.log(person)
@@ -44,7 +46,7 @@ export class EventService {
         const contractResponse = await createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT));
         if (contractResponse.status == 200) {
             return this.addContractAddress(event.id, contractResponse.address, args).then(() => {
-                console.log(event)
+                    console.log(event)
                     return event;
                 }
             ).catch((error) => {
@@ -77,47 +79,26 @@ export class EventService {
         });
     }
 
-    findOneByID(id: number, args: { select: Prisma.EventSelect }) {
+    findOne(whereArgs: FindUniqueEventOrThrowArgs, selectArgs: { select: Prisma.EventSelect }) {
         return this.prisma.event.findUnique({
-            where: {
-                id: id
-            }, select: args.select
+            where: whereArgs.where, select: selectArgs.select
         })
     }
 
-    findManyByTG(tgID: string, args: { select: Prisma.EventSelect }) {
+    findMany(whereArgs: FindManyEventArgs, selectArgs: { select: Prisma.EventSelect }) {
         return this.prisma.event.findMany({
-            where: {
-                creator: {
-                    tgID: tgID
-                }
-            }, select: args.select
+            where: whereArgs.where, select: selectArgs.select
         })
     }
 
-    findOneByLink(link: string, args: { select: Prisma.EventSelect }) {
-        return this.prisma.event.findUnique({
-            where: {
-                approveLink: link
-            }, select: args.select
-        })
-    }
-
-    findManyByName(name: string, args: { select: Prisma.EventSelect }) {
-        return this.prisma.event.findMany({
-            where: {
-                name: name
-            }, select: args.select
-        })
-    }
-    addParticipant(eventID:number){
+    addParticipant(eventID: number) {
         return this.prisma.event.update({
-            where:{
-                id:eventID
+            where: {
+                id: eventID
             },
-            data:{
-                registeredParticipants:{
-                    increment:1
+            data: {
+                registeredParticipants: {
+                    increment: 1
                 }
             }
         })

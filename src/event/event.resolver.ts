@@ -4,6 +4,8 @@ import {Event} from './entities/event.entity';
 import {CreateEventInput} from './dto/create-event.input';
 import {Relations} from "../rest/util/responses";
 import {Prisma} from '@prisma/client';
+import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
+import {FindManyEventArgs} from "./dto/find-many-event.args";
 
 @Resolver(() => Event)
 export class EventResolver {
@@ -14,29 +16,14 @@ export class EventResolver {
         return this.eventService.createEvent(createEventInput,tgID, relations);
     }
 
-    @Query(() => [Event], {name: 'eventCollection', description: "получение всех мероприятий"})
-    findAll(@Relations() relations: { select: Prisma.EventSelect }) {
-        return this.eventService.findAll(relations);
-    }
-
-    @Query(() => Event, {name: 'eventByID', description: "получение мероприятия по его id"})
-    findOneByID(@Args('id', {type: () => Int}) id: number, @Relations() relations: { select: Prisma.EventSelect }) {
-        return this.eventService.findOneByID(id, relations);
+    @Query(() => Event, {name: 'event', description: "получение мероприятия по его характеристикам", nullable:true})
+    findOne(@Relations() relations: { select: Prisma.EventSelect }, @Args() args: FindUniqueEventOrThrowArgs) {
+        return this.eventService.findOne(args, relations);
     }
 
     @Query(() => [Event], {name: 'eventCollectionByTG', description: "получение мероприятий по телеграмм id создателя"})
-    findOneByTG(@Args('tgID', {type: () => String}) tgID: string, @Relations() relations: { select: Prisma.EventSelect }) {
-        return this.eventService.findManyByTG(tgID, relations);
-    }
-
-    @Query(() => Event, {name: 'eventByLink', description: "получение мероприятия по подтверждающей участие ссылке"})
-    findOneByLink(@Args('link', {type: () => String}) link: string, @Relations() relations: { select: Prisma.EventSelect }) {
-        return this.eventService.findOneByLink(link, relations);
-    }
-
-    @Query(() => [Event], {name: 'eventCollectionByName', description: "получение всех мероприятий с данным именем"})
-    findOneByName(@Args('name', {type: () => String}) name: string, @Relations() relations: { select: Prisma.EventSelect }) {
-        return this.eventService.findManyByName(name, relations,);
+    findMany(@Args() whereArgs: FindManyEventArgs, @Relations() relations: { select: Prisma.EventSelect }) {
+        return this.eventService.findMany(whereArgs, relations);
     }
 
     @Mutation(() => Event, {description: "добавление подтверждающей ссылки"})

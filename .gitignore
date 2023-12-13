@@ -36,3 +36,4 @@ lerna-debug.log*
 
 prisma/dev.db-journal
 .env
+src/@generated
