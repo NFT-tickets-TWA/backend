@@ -1,4 +1,4 @@
-import {InputType, Int, Field, GraphQLISODateTime} from '@nestjs/graphql';
+import {InputType, Int, Field, GraphQLISODateTime, ID} from '@nestjs/graphql';
 import {Event as EventDB} from '@prisma/client';
 
 
@@ -20,7 +20,7 @@ export class CreateEventInput {
     startedAt: EventDB["startedAt"];
     @Field(() => GraphQLISODateTime)
     finishedAt: EventDB["finishedAt"];
-    @Field(() => Int, {nullable: true})
+    @Field(() => ID, {nullable: true})
     locationID?: EventDB["locationID"];
     @Field(() => String)
     nftIpfsUrl: EventDB["nftIpfsUrl"];
