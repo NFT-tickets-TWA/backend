@@ -9,7 +9,7 @@ export class Person{
   @Field(() => String)
   tgID: PersonDB[`tgID`];
   @Field(() => String)
-  role: string;
+  role: PersonDB["role"];
   @Field(() => [ParticipantList])
   ParticipantList: ParticipantList[];
   @Field(() => [Event])

@@ -1,17 +1,17 @@
 import {ObjectType, Field, Int, ID} from '@nestjs/graphql';
-
+import { ParticipantList as ParticipantListDB } from '@prisma/client';
 
 @ObjectType()
 export class ParticipantList {
   @Field(() => ID)
-  id: number;
+  id: ParticipantListDB["id"];
 
   @Field(() => ID)
-  personID: number;
+  personID: ParticipantListDB["id"];
 
   @Field(() => ID)
-  eventID: number;
+  eventID: ParticipantListDB["id"];
 
   @Field(() => String)
-  status: string;
+  status: ParticipantListDB["status"];
 }

@@ -1,35 +1,33 @@
-import {InputType, Int, Field, GraphQLISODateTime, ArgsType} from '@nestjs/graphql';
-import {Event as EventDB, EventStatus, EventType, Prisma} from '@prisma/client';
-import {EventWhereUniqueInput} from "./event-where-unique.input";
-import {Type} from "class-transformer";
+import {InputType, Int, Field, GraphQLISODateTime} from '@nestjs/graphql';
+import {Event as EventDB} from '@prisma/client';
 
 
 @InputType()
 export class CreateEventInput {
     @Field(() => String)
-    name: string;
+    name: EventDB["name"];
     @Field(() => String, {nullable: true, defaultValue: "NOT_STATED"})
-    type?: EventType;
+    type?: EventDB["type"];
     @Field(() => String, {nullable: true, defaultValue: "REGISTRATION_CLOSED"})
-    status?: EventStatus;
+    status?: EventDB["status"];
     @Field(() => String, {nullable: true})
-    urlCover?: string;
+    urlCover?: EventDB["urlCover"];
     @Field(() => String, {nullable: true})
-    description?: string;
+    description?: EventDB["description"];
     @Field(() => Boolean)
-    isSBT: boolean;
+    isSBT: EventDB["isSBT"];
     @Field(() => GraphQLISODateTime)
-    startedAt: string;
+    startedAt: EventDB["startedAt"];
     @Field(() => GraphQLISODateTime)
-    finishedAt: string;
+    finishedAt: EventDB["finishedAt"];
     @Field(() => Int, {nullable: true})
-    locationID?: number;
+    locationID?: EventDB["locationID"];
     @Field(() => String)
-    nftIpfsUrl: string;
+    nftIpfsUrl: EventDB["nftIpfsUrl"];
     @Field(() => Int)
-    countOfRewardTokens: number;
+    countOfRewardTokens: EventDB["countOfRewardTokens"];
     @Field(() => String, {nullable: true})
-    approveLink: string;
+    approveLink: EventDB["approveLink"];
 }
 
 

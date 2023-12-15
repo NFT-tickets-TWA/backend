@@ -31,7 +31,7 @@ export class Event {
     @Field(() => String)
     status: EventDB["type"];
     @Field(() => String, {nullable: true, description:"ссылка для подтверждения регестрации"})
-    approveLink: string
+    approveLink: EventDB["approveLink"];
     @Field(() => Location, {nullable: true})
     location: Location
 }

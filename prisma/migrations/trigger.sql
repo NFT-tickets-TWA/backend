@@ -41,6 +41,7 @@ create or replace function event_update_at()
 $$
 begin
     new."updatedAt" = 'now()';
+    RETURN NEW;
 end;
 $$
 language 'plpgsql';

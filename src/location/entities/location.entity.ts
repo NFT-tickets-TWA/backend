@@ -1,13 +1,13 @@
 import {ObjectType, Field, ID} from '@nestjs/graphql';
-
+import { Location as LocationDB } from '@prisma/client';
 @ObjectType()
 export class Location {
     @Field(() => ID)
-    id: number;
+    id: LocationDB["id"];
     @Field(() => String, {nullable:true})
-    address?: string;
+    address?: LocationDB["address"];
     @Field(() => Boolean)
-    isOffline:boolean;
+    isOffline:LocationDB["isOffline"];
     @Field(() => String, {nullable:true, description: "ссылка на мероприятие, если оно онлайн"})
-    link?:string;
+    link?:LocationDB["link"];
 }
