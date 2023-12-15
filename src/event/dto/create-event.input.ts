@@ -21,7 +21,7 @@ export class CreateEventInput {
     @Field(() => GraphQLISODateTime)
     finishedAt: EventDB["finishedAt"];
     @Field(() => ID, {nullable: true})
-    locationID?: EventDB["locationID"];
+    locationID?: number;
     @Field(() => String)
     nftIpfsUrl: EventDB["nftIpfsUrl"];
     @Field(() => Int)
