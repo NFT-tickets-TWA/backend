@@ -8,7 +8,7 @@ export class CreateEventInput {
     name: EventDB["name"];
     @Field(() => String, {nullable: true, defaultValue: "NOT_STATED"})
     type?: EventDB["type"];
-    @Field(() => String, {nullable: true, defaultValue: "REGISTRATION_CLOSED"})
+    @Field(() => String, {nullable: true, defaultValue: "REGISTRATION_OPENED"})
     status?: EventDB["status"];
     @Field(() => String, {nullable: true})
     urlCover?: EventDB["urlCover"];

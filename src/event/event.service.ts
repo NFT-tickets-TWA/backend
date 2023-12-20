@@ -3,7 +3,7 @@ import {CreateEventInput} from './dto/create-event.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {createInternalEvent} from "../contract/contract";
 import {ContractEvent} from "../rest/util/responses";
-import {Prisma} from '@prisma/client';
+import {EventStatus, Prisma} from '@prisma/client';
 import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
 import {FindManyEventArgs} from "./dto/find-many-event.args";
 
@@ -111,6 +111,17 @@ export class EventService {
                 },
                 data: {
                     approveLink: approveLink
+                }, select: args.select
+            }
+        );
+    }
+    updateStatus(eventID: number, newStatus: EventStatus, args: { select: Prisma.EventSelect }) {
+        return this.prisma.event.update({
+                where: {
+                    id: eventID
+                },
+                data: {
+                    status: newStatus
                 }, select: args.select
             }
         );
