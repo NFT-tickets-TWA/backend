@@ -5,8 +5,8 @@ import { Event as EventDB } from '@prisma/client';
 @InputType()
 export class EventWhereUniqueInput {
 
-    @Field(() => ID, {nullable:true})
-    id?: EventDB["id"];
+    @Field(() => Int, {nullable:true})
+    id?: number;
 
     @Field(() => String, {nullable:true})
     approveLink?: string;
