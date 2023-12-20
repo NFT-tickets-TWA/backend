@@ -14,6 +14,7 @@ export class ParticipantListService {
         const data = await this.prisma.participantList.create({
             data: createParticipantListInput
         });
+        console.log(data)
         this.eventService.addParticipant(data.eventID).then(() => {
             return data;
         });
