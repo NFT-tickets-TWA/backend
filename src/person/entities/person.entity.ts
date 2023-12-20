@@ -5,7 +5,7 @@ import {Event} from "../../event/entities/event.entity";
 @ObjectType()
 export class Person{
   @Field(() => ID)
-  id: PersonDB[`id`];
+  id: number;
   @Field(() => String)
   tgID: PersonDB[`tgID`];
   @Field(() => String)
