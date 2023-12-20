@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {CreateParticipantListInput} from './dto/create-participant-list.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {EventService} from "../event/event.service";
+import {Prisma} from "@prisma/client";
 
 
 @Injectable()
@@ -10,14 +11,13 @@ export class ParticipantListService {
     }
 
 
-    async create(createParticipantListInput: CreateParticipantListInput) {
+    async create(createParticipantListInput: CreateParticipantListInput,  selectArgs: { select: Prisma.ParticipantListSelect }) {
         const data = await this.prisma.participantList.create({
-            data: createParticipantListInput
+            data: createParticipantListInput,
+            select: selectArgs.select
         });
-        console.log(data)
-        this.eventService.addParticipant(data.eventID).then(() => {
-            return data;
-        });
+        await this.eventService.addParticipant(createParticipantListInput.eventID);
+        return data;
     }
 
 
