@@ -1,16 +1,17 @@
-import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {CreateEventInput} from './dto/create-event.input';
 import {PrismaService} from "../prisma/prisma.service";
-import {createInternalEvent} from "../contract/contract";
-import {ContractEvent} from "../rest/util/responses";
-import {EventStatus, Prisma} from '@prisma/client';
+import {createInternalEvent, mintNft} from "../contract/contract";
+import {ContractEvent, handlePrismaError} from "../rest/util/responses";
+import {EventStatus, ParticipantList, Prisma} from '@prisma/client';
 import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
 import {FindManyEventArgs} from "./dto/find-many-event.args";
+import {ParticipantListService} from "../participant-list/participant-list.service";
 
 
 @Injectable()
 export class EventService {
-    constructor(private prisma: PrismaService) {
+    constructor(private prisma: PrismaService, @Inject(forwardRef(() => ParticipantListService)) private participantListService:ParticipantListService) {
     }
 
     async create(createEventInput: CreateEventInput, tgID: string) {
@@ -89,6 +90,28 @@ export class EventService {
         return this.prisma.event.findMany({
             where: whereArgs.where, select: selectArgs.select
         })
+    }
+    async mintNft(eventID: number):Promise<ParticipantList[]>{
+        console.log("request: mint nft")
+        return this.participantListService.getApprovedPersons(eventID).then((participants) => {
+            const promises:Promise<ParticipantList>[] = [];
+            participants.forEach((participant) => {
+                promises.push(this.mint(participant.personID, participant.eventID, participant.person.walletAddress, participant.event.contractAddress, participant.event.isSBT));
+            })
+            return  Promise.all(promises);
+        })
+    }
+    async mint(person_id: number, event_id: number, walletAddress: string, contractAddress: string, isSbt: boolean):Promise<ParticipantList> {
+        return mintNft(walletAddress, contractAddress, isSbt).then(
+            (data) => {
+                console.log(data)
+                if (data.status == 200) {
+                    return  this.participantListService.sendNft(person_id, event_id);
+                } else {
+                    throw new Error(data.message)
+                }
+            }
+        )
     }
 
     addParticipant(eventID: number) {

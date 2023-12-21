@@ -6,6 +6,7 @@ import {Relations} from "../rest/util/responses";
 import {EventStatus, Prisma} from '@prisma/client';
 import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
 import {FindManyEventArgs} from "./dto/find-many-event.args";
+import {ParticipantList} from "../participant-list/entities/participant-list.entity";
 
 @Resolver(() => Event)
 export class EventResolver {
@@ -29,6 +30,10 @@ export class EventResolver {
     @Mutation(() => Event, {description: "добавление подтверждающей ссылки"})
     addApproveLink(@Args('eventID') eventID: number, @Args('approveLink') approveLink: string, @Relations() relations: { select: Prisma.EventSelect }) {
         return this.eventService.addApproveLink(eventID, approveLink, relations);
+    }
+    @Mutation(() => [ParticipantList], {description: "mint nft для всех участников мероприятия"})
+    mintNft(@Args('eventID') eventID: number) {
+        return this.eventService.mintNft(eventID);
     }
     @Mutation(() => Event, {description: "изменение статуса мероприятия"})
     updateStatus(@Args('eventID') eventID: number, @Args('newStatus') newStatus: EventStatus, @Relations() relations: { select: Prisma.EventSelect }) {

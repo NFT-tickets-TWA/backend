@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {CreateParticipantListInput} from './dto/create-participant-list.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {EventService} from "../event/event.service";
@@ -7,7 +7,7 @@ import {Prisma} from "@prisma/client";
 
 @Injectable()
 export class ParticipantListService {
-    constructor(private prisma: PrismaService, private eventService: EventService) {
+    constructor(private prisma: PrismaService, @Inject(forwardRef(() => EventService)) private eventService: EventService) {
     }
 
 

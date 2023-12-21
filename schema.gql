@@ -125,6 +125,12 @@ type Mutation {
 
   """добавление подтверждающей ссылки"""
   addApproveLink(eventID: Float!, approveLink: String!): Event!
+
+  """mint nft для всех участников мероприятия"""
+  mintNft(eventID: Float!): [ParticipantList!]!
+
+  """изменение статуса мероприятия"""
+  updateStatus(eventID: Float!, newStatus: String!): Event!
 }
 
 input CreateLocationInput {
@@ -136,7 +142,7 @@ input CreateLocationInput {
 input CreateEventInput {
   name: String!
   type: String = "NOT_STATED"
-  status: String = "REGISTRATION_CLOSED"
+  status: String = "REGISTRATION_OPENED"
   urlCover: String
   description: String
   isSBT: Boolean!
