@@ -14,10 +14,15 @@ import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql"
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const httpsOptions = {
+    key: fs.readFileSync('./ssl/45.12.230.236.csr'),
+    cert: fs.readFileSync('./ssl/45.12.230.236.key'),
+  };
+  const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
   // prisma
   const prismaService = app.get(PrismaService);
   app.enableShutdownHooks();
+
   // swagger
   const config = new DocumentBuilder()
       .setTitle('NFT-Tickets server')
