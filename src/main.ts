@@ -15,8 +15,8 @@ dotenv.config();
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync('./ssl/45.12.230.236.csr'),
-    cert: fs.readFileSync('./ssl/45.12.230.236.key'),
+    cert: fs.readFileSync('./ssl/45.12.230.236.csr'),
+    key: fs.readFileSync('./ssl/45.12.230.236.key'),
   };
   const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
   // prisma
