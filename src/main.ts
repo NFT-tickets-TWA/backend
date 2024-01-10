@@ -15,7 +15,7 @@ dotenv.config();
 
 async function bootstrap() {
   const httpsOptions = {
-    cert: fs.readFileSync('./ssl/cer.pem'),
+    cert: fs.readFileSync('./ssl/cert.pem'),
     key: fs.readFileSync('./ssl/key.pem'),
   };
   const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
