@@ -2,7 +2,7 @@ create or replace function check_if_registration_opened() returns trigger as
 $$
 begin
     if exists(select * from "Event" where id = NEW."eventID") then
-        if (select * from "Event" where id = NEW."eventID" and status = 'REGISTRATION_OPENED') then
+        if exists(select * from "Event" where id = NEW."eventID" and status = 'REGISTRATION_OPENED') then
             return new;
         else
             raise EXCEPTION 'registration must be opened if you want to register';
