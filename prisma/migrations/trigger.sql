@@ -18,27 +18,27 @@ create or replace function check_before_approve()
     returns trigger as
 $$
 begin
-    if OLD.status = 'REGISTERED' then
-        return NEW;
+    if NEW.status = 'APPROVED' then
+        if OLD.status = 'REGISTERED' then
+            return NEW;
+        else
+            raise EXCEPTION 'user not registered';
+        end if;
     else
-        return null;
+        if NEW.status = 'RECEIVED_NFT' then
+            if OLD.status = 'APPROVED' then
+                return NEW;
+            else
+                raise EXCEPTION 'user not approved';
+            end if;
+        end if;
     end if;
+    return NEW;
 end;
 $$
     language 'plpgsql';
 
-create or replace function check_before_received_nft()
-    returns trigger as
-$$
-begin
-    if OLD.status = 'APPROVED' then
-        return NEW;
-    else
-        return null;
-    end if;
-end;
-$$
-    language 'plpgsql';
+
 create or replace function event_update_at()
     returns trigger as
 $$
@@ -74,7 +74,7 @@ CREATE TRIGGER check_before_create_location_trigger
 EXECUTE FUNCTION check_before_create_location();
 
 create
-    or replace trigger check_approved
+    or replace trigger check_change_status
     before
         update
     on "ParticipantList"
@@ -90,14 +90,6 @@ create
 execute function
     event_update_at();
 
-create
-    or replace trigger check_received_aft
-    before
-        update
-    on "ParticipantList"
-    for each row
-execute function
-    check_before_received_nft();
 create
     or replace trigger check_is_registration_opened
     before
