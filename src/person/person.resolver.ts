@@ -1,7 +1,7 @@
 import {Resolver, Query, Mutation, Args, Int} from '@nestjs/graphql';
 import {PersonService} from './person.service';
 import {Person} from './entities/person.entity';
-import {Relations} from "../rest/util/responses";
+import {Relations} from "../util/util";
 import {Prisma} from "@prisma/client";
 
 @Resolver(() => Person)

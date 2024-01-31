@@ -12,7 +12,6 @@ import { RoleModule } from './role/role.module';
 import { LocationModule } from './location/location.module';
 import { ParticipantListModule } from './participant-list/participant-list.module';
 import { EventModule } from './event/event.module';
-import {ParticipantListController} from "./rest/controllers/controller";
 import {ApolloServerPluginLandingPageLocalDefault} from "@apollo/server/plugin/landingPage/default";
 
 
@@ -92,7 +91,7 @@ const authenticate = async (email: string, password: string) => {
             },
         })),
     HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, ParticipantListModule, EventModule],
-    controllers: [ParticipantListController],
+    controllers: [],
     providers: []
 })
 export class AppModule {

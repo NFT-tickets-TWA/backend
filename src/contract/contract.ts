@@ -1,7 +1,7 @@
 import * as process from "process";
 
-import {ContractEvent} from '../rest/util/responses';
-import {CustomResponse} from "../rest/util/responses";
+import {ContractEvent} from '../util/util';
+import {CustomResponse} from "../util/util";
 import {ethers} from "ethers";
 import fs from "fs";
 

@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
 import { ParticipantListService } from './participant-list.service';
 import { ParticipantList } from './entities/participant-list.entity';
 import { CreateParticipantListInput } from './dto/create-participant-list.input';
-import {Relations} from "../rest/util/responses";
+import {Relations} from "../util/util";
 import {Prisma} from "@prisma/client";
 
 

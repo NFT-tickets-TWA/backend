@@ -2,7 +2,7 @@ import {forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundExcep
 import {CreateEventInput} from './dto/create-event.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {createInternalEvent, mintNft} from "../contract/contract";
-import {ContractEvent, handlePrismaError} from "../rest/util/responses";
+import {ContractEvent, handlePrismaError} from "../util/util";
 import {EventStatus, ParticipantList, Prisma} from '@prisma/client';
 import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
 import {FindManyEventArgs} from "./dto/find-many-event.args";
