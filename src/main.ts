@@ -14,12 +14,12 @@ import {GraphQLSchemaBuilderModule, GraphQLSchemaFactory} from "@nestjs/graphql"
 dotenv.config();
 
 async function bootstrap() {
-  const httpsOptions = {
-    cert: fs.readFileSync('./ssl/cert.pem'),
-    key: fs.readFileSync('./ssl/key.pem'),
-  };
-  // const app = await NestFactory.create(AppModule, { cors: true });
-  const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
+  // const httpsOptions = {
+  //   cert: fs.readFileSync('./ssl/cert.pem'),
+  //   key: fs.readFileSync('./ssl/key.pem'),
+  // };
+  const app = await NestFactory.create(AppModule, { cors: true });
+  // const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
   // prisma
   const prismaService = app.get(PrismaService);
   app.enableShutdownHooks();
