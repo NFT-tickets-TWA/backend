@@ -12,10 +12,12 @@ export class ParticipantListService {
 
 
     async create(createParticipantListInput: CreateParticipantListInput,  selectArgs: { select: Prisma.ParticipantListSelect }) {
+       console.log("smth")
         const data = await this.prisma.participantList.create({
             data: createParticipantListInput,
             select: selectArgs.select
         });
+        console.log(data)
         await this.eventService.addParticipant(createParticipantListInput.eventID);
         return data;
     }
@@ -36,6 +38,20 @@ export class ParticipantListService {
     }
 
     approve(personID: number, eventID: number) {
+        console.log("smth")
+        this.prisma.participantList.findUnique(
+            {
+                where: {
+                    personID_eventID: {
+                        personID: personID,
+                        eventID: eventID
+                    },
+                    status: "REGISTERED"
+                }
+            }
+        ).then((res)=>{
+            console.log(res)
+        })
         return this.prisma.participantList.update({
             where: {
                 personID_eventID: {
@@ -45,7 +61,7 @@ export class ParticipantListService {
                 status: "REGISTERED"
             },
             data: {
-                status: "APPROVED"
+                status:"APPROVED"
             }
         })
     }
@@ -75,8 +91,36 @@ export class ParticipantListService {
 
         })
     }
+    get(personID:number,eventID: number) {
+        return this.prisma.participantList.findUnique({
+            where: {
+                personID_eventID: {
+                    personID: personID,
+                    eventID: eventID
+                }
+            },
+            select: {
+                personID: true,
+                status:true,
+                person: {
+                    select: {
+                        walletAddress: true
+                    }
+                },
+                eventID: true,
+                event: {
+                    select: {
+                        contractAddress: true,
+                        isSBT: true
+                    }
+                }
+            }
+
+        })
+    }
 
     sendNft(personID: number, eventID: number) {
+        console.log("update nft status on received nft: person "+personID+" event "+eventID)
         return this.prisma.participantList.update({
             where: {
                 personID_eventID: {

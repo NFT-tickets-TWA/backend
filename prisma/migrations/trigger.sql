@@ -1,4 +1,5 @@
-create or replace function check_if_registration_opened() returns trigger as
+create or replace function check_if_registration_opened()
+    returns trigger as
 $$
 begin
     if exists(select * from "Event" where id = NEW."eventID") then
@@ -67,7 +68,7 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-CREATE TRIGGER check_before_create_location_trigger
+CREATE or replace TRIGGER check_before_create_location_trigger
     BEFORE INSERT OR UPDATE
     ON "Location"
     FOR EACH ROW

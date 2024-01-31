@@ -11,7 +11,7 @@ import {ParticipantListService} from "../participant-list/participant-list.servi
 
 @Injectable()
 export class EventService {
-    constructor(private prisma: PrismaService, @Inject(forwardRef(() => ParticipantListService)) private participantListService:ParticipantListService) {
+    constructor(private prisma: PrismaService, @Inject(forwardRef(() => ParticipantListService)) private participantListService: ParticipantListService) {
     }
 
     async create(createEventInput: CreateEventInput, tgID: string) {
@@ -46,9 +46,10 @@ export class EventService {
         const event = await this.create(createEventInput, tgID);
         const contractResponse = await createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT));
         if (contractResponse.status == 200) {
-            return this.addContractAddress(event.id, contractResponse.address, args).then(() => {
-                    console.log(event)
-                    return event;
+            return this.addContractAddress(event.id, contractResponse.address, args).then((nevent) => {
+                    console.log(nevent)
+                    console.log("smmmmth")
+                    return nevent;
                 }
             ).catch((error) => {
                 console.log(error);
@@ -91,22 +92,32 @@ export class EventService {
             where: whereArgs.where, select: selectArgs.select
         })
     }
-    async mintNft(eventID: number):Promise<ParticipantList[]>{
+
+    async mintNft(eventID: number): Promise<ParticipantList[]> {
         console.log("request: mint nft")
         return this.participantListService.getApprovedPersons(eventID).then((participants) => {
-            const promises:Promise<ParticipantList>[] = [];
+            const promises: Promise<ParticipantList>[] = [];
             participants.forEach((participant) => {
                 promises.push(this.mint(participant.personID, participant.eventID, participant.person.walletAddress, participant.event.contractAddress, participant.event.isSBT));
             })
-            return  Promise.all(promises);
+            return Promise.all(promises);
         })
     }
-    async mint(person_id: number, event_id: number, walletAddress: string, contractAddress: string, isSbt: boolean):Promise<ParticipantList> {
+
+    async mintOne(person_id: number, event_id: number): Promise<ParticipantList> {
+        return this.participantListService.get(person_id,event_id).then(
+            (participant)=>{
+                return this.mint(participant.personID, participant.eventID, participant.person.walletAddress, participant.event.contractAddress, participant.event.isSBT)
+            }
+        )
+    }
+    async mint(person_id: number, event_id: number, walletAddress: string, contractAddress: string, isSbt: boolean): Promise<ParticipantList> {
+        console.log(person_id + " " + event_id + " " + walletAddress)
         return mintNft(walletAddress, contractAddress, isSbt).then(
             (data) => {
                 console.log(data)
                 if (data.status == 200) {
-                    return  this.participantListService.sendNft(person_id, event_id);
+                    return this.participantListService.sendNft(person_id, event_id);
                 } else {
                     throw new Error(data.message)
                 }
@@ -138,6 +149,7 @@ export class EventService {
             }
         );
     }
+
     updateStatus(eventID: number, newStatus: EventStatus, args: { select: Prisma.EventSelect }) {
         return this.prisma.event.update({
                 where: {
@@ -157,10 +169,18 @@ export class EventService {
                 },
                 data: {
                     contractAddress: contractAddress
-                },
-                select: args.select
+                }
             }
-        )
+        ).then(()=>{
+           return  this.prisma.event.findUnique({
+                where:{
+                    id:id
+                },
+               select: args.select
+
+           })
+        })
+
     }
 
     deleteEvent(id: number) {

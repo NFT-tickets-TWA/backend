@@ -33,10 +33,12 @@ type Event {
 
   """конец мероприятия"""
   finishedAt: DateTime!
-  locationID: ID
 
   """ссылка на ipfs"""
   nftIpfsUrl: String!
+
+  """адрес контракта"""
+  contractAddress: String!
 
   """количество зарегестрированных пользователей"""
   registeredParticipants: Int!
@@ -128,6 +130,9 @@ type Mutation {
 
   """mint nft для всех участников мероприятия"""
   mintNft(eventID: Float!): [ParticipantList!]!
+
+  """mint nft для участника мероприятия"""
+  mintPersonNft(personID: Float!, eventID: Float!): ParticipantList!
 
   """изменение статуса мероприятия"""
   updateStatus(eventID: Float!, newStatus: String!): Event!

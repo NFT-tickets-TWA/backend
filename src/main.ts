@@ -18,6 +18,7 @@ async function bootstrap() {
     cert: fs.readFileSync('./ssl/cert.pem'),
     key: fs.readFileSync('./ssl/key.pem'),
   };
+  // const app = await NestFactory.create(AppModule, { cors: true });
   const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
   // prisma
   const prismaService = app.get(PrismaService);
@@ -34,8 +35,8 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
   fs.writeFileSync("./swagger-spec.json", JSON.stringify(document));
   SwaggerModule.setup("/api", app, document);
-  // await app.listen( process.env.SERVICE_PORT, process.env.HOST_NAME);
-  await app.listen(process.env.PORT || process.env.SERVICE_PORT, "0.0.0.0");
+  await app.listen( process.env.SERVICE_PORT, process.env.HOST_NAME);
+  // await app.listen(process.env.PORT || process.env.SERVICE_PORT, "0.0.0.0");
 }
 bootstrap();
 

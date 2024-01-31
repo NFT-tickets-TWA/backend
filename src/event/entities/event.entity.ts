@@ -20,10 +20,10 @@ export class Event {
     startedAt: EventDB["startedAt"];
     @Field(() => GraphQLISODateTime, {description:"конец мероприятия"})
     finishedAt: EventDB["finishedAt"];
-    @Field(() => ID, {nullable: true})
-    locationID: EventDB["locationID"];
     @Field(() => String, {description:"ссылка на ipfs"})
     nftIpfsUrl: EventDB["nftIpfsUrl"];
+    @Field(() => String, {description:"адрес контракта"})
+    contractAddress: EventDB["contractAddress"];
     @Field(() => Int, {description:"количество зарегестрированных пользователей"})
     registeredParticipants: EventDB["registeredParticipants"];
     @Field(() => String)
