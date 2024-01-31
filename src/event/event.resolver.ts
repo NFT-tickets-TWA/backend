@@ -7,12 +7,15 @@ import {EventStatus, Prisma} from '@prisma/client';
 import {FindUniqueEventOrThrowArgs} from "./dto/find-unique-event-or-throw.args";
 import {FindManyEventArgs} from "./dto/find-many-event.args";
 import {ParticipantList} from "../participant-list/entities/participant-list.entity";
+import {AuthGuard} from "../jwt/jwt";
+import {UseGuards} from "@nestjs/common";
 
 @Resolver(() => Event)
 export class EventResolver {
     constructor(private readonly eventService: EventService) {
     }
     @Mutation(() => Event, {description: "создание мероприятия"})
+    @UseGuards(AuthGuard)
     createEvent(@Args('input') createEventInput: CreateEventInput,@Args('tgID', {description:"телеграмм id создателя мероприятия"}) tgID: string, @Relations() relations: { select: Prisma.EventSelect }) {
         return this.eventService.createEvent(createEventInput,tgID, relations);
     }
