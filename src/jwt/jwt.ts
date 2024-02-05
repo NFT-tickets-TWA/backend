@@ -2,7 +2,8 @@ import * as process from "process";
 
 import {Injectable, CanActivate, ExecutionContext} from '@nestjs/common';
 import {Observable} from 'rxjs';
-const crypto = require('crypto')
+import { webcrypto } from 'crypto';
+const { unescape } = require('querystring');
 @Injectable()
 export class AuthGuard implements CanActivate {
     canActivate(
@@ -11,8 +12,9 @@ export class AuthGuard implements CanActivate {
         console.log(context.switchToHttp().getRequest())
         for (var i = 0; i < context.getArgs()[2].req.rawHeaders.length; i++) {
             if (context.getArgs()[2].req.rawHeaders[i] == 'telegram-data') {
-
-                return checkAuthorization(context.getArgs()[2].req.rawHeaders[i + 1]);
+                const data = Object.fromEntries(new URLSearchParams(context.getArgs()[2].req.rawHeaders[i + 1]));
+                console.log(data)
+                return isHashValid(data, process.env.TELEGRAM_BOT_TOKEN);
             }
         }
 
@@ -20,52 +22,37 @@ export class AuthGuard implements CanActivate {
     }
 }
 
+async function isHashValid(data: Record<string, string>, botToken: string) {
+    const encoder = new TextEncoder();
 
-function parseAuthString(iniData) {
+    const checkString = Object.keys(data)
+        .filter((key) => key !== 'hash')
+        .map((key) => `${key}=${data[key]}`)
+        .sort()
+        .join('\n');
 
-    const searchParams = new URLSearchParams(iniData);
-
-    const hash = searchParams.get('hash');
-    searchParams.delete('hash');
-
-    const restKeys = Array.from(searchParams.entries());
-    restKeys.sort(([aKey, aValue], [bKey, bValue]) => aKey.localeCompare(bKey));
-
-    const dataCheckString = restKeys.map(([n, v]) => `${n}=${v}`).join('\n');
-
-    return {
-        dataCheckString,
-        hash
-    };
-}
-
-function encodeHmac(message, key, repr=undefined) {
-    return crypto.createHmac('sha256', key).update(message).digest(repr);
-}
-
-function checkAuthorization(iniData){
-
-    console.log(iniData)
-    const authTelegramData = parseAuthString(iniData);
-
-    console.log(authTelegramData.dataCheckString)
-    const secretKey = encodeHmac(
-        process.env.TELEGRAM_BOT_TOKEN,
-        process.env.WEB_APP_DATA_CONST,
+    const secretKey = await webcrypto.subtle.importKey(
+        'raw',
+        encoder.encode('WebAppData'),
+        { name: 'HMAC', hash: 'SHA-256' },
+        true,
+        ['sign']
     );
 
+    const secret = await webcrypto.subtle.sign('HMAC', secretKey, encoder.encode(botToken));
 
-    const validationKey = encodeHmac(
-        authTelegramData.dataCheckString,
-        secretKey,
-        'hex',
+    const signatureKey = await webcrypto.subtle.importKey(
+        'raw',
+        secret,
+        { name: 'HMAC', hash: 'SHA-256' },
+        true,
+        ['sign']
     );
-    console.log(validationKey)
-    console.log(authTelegramData.hash)
 
-    if (validationKey === authTelegramData.hash) {
-        return true;
-    }
+    const signature = await webcrypto.subtle.sign('HMAC', signatureKey, encoder.encode(checkString));
 
-    return null;
+    const hex = Buffer.from(signature).toString('hex');
+    console.log(data.hash)
+    console.log(hex)
+    return data.hash === hex;
 }
