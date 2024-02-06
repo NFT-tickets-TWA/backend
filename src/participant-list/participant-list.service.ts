@@ -3,6 +3,7 @@ import {CreateParticipantListInput} from './dto/create-participant-list.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {EventService} from "../event/event.service";
 import {Prisma} from "@prisma/client";
+import {Args} from "@nestjs/graphql";
 
 
 @Injectable()
@@ -11,14 +12,12 @@ export class ParticipantListService {
     }
 
 
-    async create(createParticipantListInput: CreateParticipantListInput,  selectArgs: { select: Prisma.ParticipantListSelect }) {
-       console.log("smth")
+    async create(personID: number,eventID: number,  selectArgs: { select: Prisma.ParticipantListSelect }) {
         const data = await this.prisma.participantList.create({
-            data: createParticipantListInput,
+            data: {personID,eventID},
             select: selectArgs.select
         });
-        console.log(data)
-        await this.eventService.addParticipant(createParticipantListInput.eventID);
+        await this.eventService.addParticipant(eventID);
         return data;
     }
 
@@ -38,7 +37,6 @@ export class ParticipantListService {
     }
 
     approve(personID: number, eventID: number) {
-        console.log("smth")
         this.prisma.participantList.findUnique(
             {
                 where: {

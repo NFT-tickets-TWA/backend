@@ -38,6 +38,7 @@ model Event {
   creatorID              Int
   startedAt              DateTime
   finishedAt             DateTime
+  registrationFinishedAt DateTime? // same finished at if no another
   locationID             Int?
   nftIpfsUrl             String            @unique
   contractAddress        String?           @unique

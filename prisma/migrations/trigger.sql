@@ -4,7 +4,11 @@ $$
 begin
     if exists(select * from "Event" where id = NEW."eventID") then
         if exists(select * from "Event" where id = NEW."eventID" and status = 'REGISTRATION_OPENED') then
-            return new;
+            if exists(select * from "Event" where id = NEW."eventID" and "finishedAt" > now()) then
+                raise EXCEPTION 'can not register because of the event is finished';
+            else
+                return new;
+            end if;
         else
             raise EXCEPTION 'registration must be opened if you want to register';
         end if;
@@ -49,6 +53,24 @@ begin
 end;
 $$
     language 'plpgsql';
+create or replace function event_registration_finished_at()
+    returns trigger as
+$$
+begin
+    if new."registrationFinishedAt" is not null then
+        if new."registrationFinishedAt" > new."finishedAt" then
+            RAISE EXCEPTION 'registration must be finished earlier than event is finished';
+        else
+            RETURN NEW;
+        end if;
+
+    else
+        new."registrationFinishedAt" = new."finishedAt";
+        return new;
+    end if;
+end;
+$$
+    language 'plpgsql';
 CREATE OR REPLACE FUNCTION check_before_create_location()
     RETURNS TRIGGER AS
 $$
@@ -90,6 +112,14 @@ create
     for each row
 execute function
     event_update_at();
+create
+    or replace trigger event_registration
+    before
+        insert
+    on "Event"
+    for each row
+execute function
+    event_registration_finished_at();
 
 create
     or replace trigger check_is_registration_opened
@@ -99,4 +129,3 @@ create
     for each row
 execute function
     check_if_registration_opened();
--- This is an empty migration.

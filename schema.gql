@@ -112,7 +112,7 @@ type Mutation {
   createLocation(createLocationInput: CreateLocationInput!): Location!
 
   """регистрация человека на мероприятие"""
-  register(createParticipantListInput: CreateParticipantListInput!): ParticipantList!
+  register(personID: Float!, eventID: Float!): ParticipantList!
 
   """подтверждение участия участника в мероприятии"""
   approve(input: CreateParticipantListInput!): ParticipantList!
@@ -153,6 +153,7 @@ input CreateEventInput {
   isSBT: Boolean!
   startedAt: DateTime!
   finishedAt: DateTime!
+  registrationFinishedAt: DateTime
   locationID: Int
   nftIpfsUrl: String!
   countOfRewardTokens: Int!

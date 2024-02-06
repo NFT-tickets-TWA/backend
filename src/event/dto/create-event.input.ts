@@ -20,6 +20,8 @@ export class CreateEventInput {
     startedAt: EventDB["startedAt"];
     @Field(() => GraphQLISODateTime)
     finishedAt: EventDB["finishedAt"];
+    @Field(() => GraphQLISODateTime, {nullable: true})
+    registrationFinishedAt?: EventDB["registrationFinishedAt"];
     @Field(() => Int, {nullable: true})
     locationID?: number;
     @Field(() => String)

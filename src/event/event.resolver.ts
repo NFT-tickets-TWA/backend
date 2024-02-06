@@ -15,7 +15,7 @@ export class EventResolver {
     constructor(private readonly eventService: EventService) {
     }
     @Mutation(() => Event, {description: "создание мероприятия"})
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     createEvent(@Args('input') createEventInput: CreateEventInput,@Args('tgID', {description:"телеграмм id создателя мероприятия"}) tgID: string, @Relations() relations: { select: Prisma.EventSelect }) {
         return this.eventService.createEvent(createEventInput,tgID, relations);
     }
