@@ -1,23 +1,22 @@
 import * as process from "process";
 
-import {Injectable, CanActivate, ExecutionContext} from '@nestjs/common';
+import {Injectable, CanActivate, ExecutionContext, Logger} from '@nestjs/common';
 import {Observable} from 'rxjs';
 import { webcrypto } from 'crypto';
-const { unescape } = require('querystring');
+
+const logger = new Logger("Auth")
 @Injectable()
 export class AuthGuard implements CanActivate {
     canActivate(
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
-        console.log(context.switchToHttp().getRequest())
-        for (var i = 0; i < context.getArgs()[2].req.rawHeaders.length; i++) {
+
+        for (let i = 0; i < context.getArgs()[2].req.rawHeaders.length; i++) {
             if (context.getArgs()[2].req.rawHeaders[i] == 'telegram-data') {
                 const data = Object.fromEntries(new URLSearchParams(context.getArgs()[2].req.rawHeaders[i + 1]));
-                console.log(data)
                 return isHashValid(data, process.env.TELEGRAM_BOT_TOKEN);
             }
         }
-
         return false;
     }
 }
@@ -52,7 +51,7 @@ async function isHashValid(data: Record<string, string>, botToken: string) {
     const signature = await webcrypto.subtle.sign('HMAC', signatureKey, encoder.encode(checkString));
 
     const hex = Buffer.from(signature).toString('hex');
-    console.log(data.hash)
-    console.log(hex)
+    logger.log("expected hash: ",data.hash)
+    logger.log("calculated hash: ",hex)
     return data.hash === hex;
 }

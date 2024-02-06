@@ -78,7 +78,7 @@ type Query {
   """получение мероприятия по его характеристикам"""
   event(where: EventWhereUniqueInput!): Event
 
-  """получение мероприятиий по его характеристикам"""
+  """получение мероприятий по его характеристикам"""
   eventCollection(where: EventWhereInput): [Event!]!
 }
 

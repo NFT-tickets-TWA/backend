@@ -1,10 +1,11 @@
-import {applyDecorators, createParamDecorator, ExecutionContext} from "@nestjs/common";
+import {applyDecorators, createParamDecorator, ExecutionContext, Logger} from "@nestjs/common";
 import {ApiResponse} from "@nestjs/swagger";
 import {Prisma} from "@prisma/client";
 import {Response} from "express";
 import {GqlExecutionContext} from "@nestjs/graphql";
 import {GraphQLResolveInfo} from "graphql/type";
 import {parseResolveInfo, ResolveTree} from 'graphql-parse-resolve-info';
+const logger = new Logger("Util")
 export class CustomResponse {
     status: number;
     message: string;
@@ -27,30 +28,7 @@ export function Response400() {
     );
 }
 
-export function Response500() {
-    return applyDecorators(
-        ApiResponse({
-            status: 500,
-            schema: {example: {message: 'message'}},
-            description: "returns error message if PrismaClientRustPanicError, PrismaClientInitializationError, or something unknown else"
-        })
-    );
-}
-export class ContractEvent {
-    name: string;
-    nftPattern: string;
-    symbol: string;
-    countOfRewardTokens: number;
-    SBTState: boolean;
 
-    constructor(name: string, url: string, symbol: string, countOfTokens: number, SBTState: boolean) {
-        this.name = name;
-        this.nftPattern = url;
-        this.symbol = symbol;
-        this.countOfRewardTokens = countOfTokens;
-        this.SBTState = SBTState;
-    }
-}
 export type PrismaSelect = {
     select: {
         [key: string]: true | PrismaSelect;
@@ -83,7 +61,6 @@ export const astToPrisma = (ast: {
 };
 
 export function handlePrismaError(error: any, res: Response): Response {
-    console.error(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError || error instanceof Prisma.PrismaClientValidationError || error instanceof Prisma.PrismaClientUnknownRequestError) {
         return res.status(400).json({message: error.message});
     }

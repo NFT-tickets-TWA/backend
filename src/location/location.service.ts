@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 
 import {PrismaService} from "../prisma/prisma.service";
 import {Location, Prisma} from '@prisma/client';
 
 @Injectable()
 export class LocationService {
+  private readonly logger = new Logger(LocationService.name)
   constructor(private prisma: PrismaService) {
   }
   create(createLocationInput: Prisma.LocationCreateInput):Promise<Location> {

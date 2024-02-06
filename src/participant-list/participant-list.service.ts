@@ -1,4 +1,4 @@
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
 import {CreateParticipantListInput} from './dto/create-participant-list.input';
 import {PrismaService} from "../prisma/prisma.service";
 import {EventService} from "../event/event.service";
@@ -8,17 +8,29 @@ import {Args} from "@nestjs/graphql";
 
 @Injectable()
 export class ParticipantListService {
+    private readonly logger = new Logger(ParticipantListService.name)
     constructor(private prisma: PrismaService, @Inject(forwardRef(() => EventService)) private eventService: EventService) {
     }
 
 
-    async create(personID: number,eventID: number,  selectArgs: { select: Prisma.ParticipantListSelect }) {
-        const data = await this.prisma.participantList.create({
-            data: {personID,eventID},
+    async create(personID: number, eventID: number, selectArgs: { select: Prisma.ParticipantListSelect }) {
+        this.prisma.participantList.create({
+            data: {personID, eventID},
             select: selectArgs.select
+        }).then((data)=>{
+            return this.eventService.incrementParticipantCount(eventID).then(()=>{
+                return data;
+            });
+        }).catch((e)=>{
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                    this.logger.warn(e)
+                    throw "It is likely that the person is already registered"
+                }
+            }
+            throw e
         });
-        await this.eventService.addParticipant(eventID);
-        return data;
+
     }
 
 
@@ -36,20 +48,7 @@ export class ParticipantListService {
         });
     }
 
-    approve(personID: number, eventID: number) {
-        this.prisma.participantList.findUnique(
-            {
-                where: {
-                    personID_eventID: {
-                        personID: personID,
-                        eventID: eventID
-                    },
-                    status: "REGISTERED"
-                }
-            }
-        ).then((res)=>{
-            console.log(res)
-        })
+    approveParticipant(personID: number, eventID: number) {
         return this.prisma.participantList.update({
             where: {
                 personID_eventID: {
@@ -59,7 +58,7 @@ export class ParticipantListService {
                 status: "REGISTERED"
             },
             data: {
-                status:"APPROVED"
+                status: "APPROVED"
             }
         })
     }
@@ -89,7 +88,8 @@ export class ParticipantListService {
 
         })
     }
-    get(personID:number,eventID: number) {
+
+    getParticipant(personID: number, eventID: number) {
         return this.prisma.participantList.findUnique({
             where: {
                 personID_eventID: {
@@ -99,7 +99,7 @@ export class ParticipantListService {
             },
             select: {
                 personID: true,
-                status:true,
+                status: true,
                 person: {
                     select: {
                         walletAddress: true
@@ -118,7 +118,7 @@ export class ParticipantListService {
     }
 
     sendNft(personID: number, eventID: number) {
-        console.log("update nft status on received nft: person "+personID+" event "+eventID)
+        this.logger.log("update nft status on received nft: person " + personID + " event " + eventID)
         return this.prisma.participantList.update({
             where: {
                 personID_eventID: {
