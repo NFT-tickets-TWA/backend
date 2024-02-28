@@ -23,23 +23,35 @@ create or replace function check_before_approve()
     returns trigger as
 $$
 begin
-    if NEW.status = 'APPROVED' then
-        if OLD.status = 'REGISTERED' then
+    if NEW.status = 'REGISTERED' then
+        if (select "registrationFinishedAt" from "Event" where id = NEW."eventID") >= now() then
             return NEW;
         else
-            raise EXCEPTION 'user not registered';
+            raise EXCEPTION 'registration already finished';
         end if;
     else
-        if NEW.status = 'RECEIVED_NFT' then
-            if OLD.status = 'APPROVED' then
-                return NEW;
+        if NEW.status = 'APPROVED' then
+            if OLD.status = 'REGISTERED' then
+                if (select "finishedAt" from "Event" where id = NEW."eventID") >= now() then
+                    return NEW;
+                else
+                    raise EXCEPTION 'event already finished';
+                end if;
             else
-                raise EXCEPTION 'user not approved';
+                raise EXCEPTION 'user not registered';
+            end if;
+        else
+            if NEW.status = 'RECEIVED_NFT' then
+                if OLD.status = 'APPROVED' then
+                    return NEW;
+                else
+                    raise EXCEPTION 'user not approved';
+                end if;
             end if;
         end if;
+        return NEW;
     end if;
-    return NEW;
-end;
+end
 $$
     language 'plpgsql';
 

@@ -14,8 +14,8 @@ export class ParticipantListResolver {
     }
 
     @Mutation(() => ParticipantList, {name: 'register', description: "регистрация человека на мероприятие"})
-    createParticipantList(@Args("personID") personID: number,
-                          @Args("eventID") eventID: number, @Relations() relations: {
+    createParticipantList(@Args("personID", { type: () => Int }) personID: number,
+                          @Args("eventID", { type: () => Int }) eventID: number, @Relations() relations: {
             select: Prisma.ParticipantListSelect
         }) {
         this.logger.log("create participant list request")
@@ -29,9 +29,10 @@ export class ParticipantListResolver {
     }
 
     @Mutation(() => ParticipantList, {name: 'approve', description: "подтверждение участия участника в мероприятии"})
-    approve(@Args('input') input: CreateParticipantListInput) {
+    approve(@Args("personID", { type: () => Int }) personID: number,
+            @Args("eventID", { type: () => Int }) eventID: number) {
         this.logger.log("approve participant request")
-        return this.participantListService.approveParticipant(input.personID, input.eventID);
+        return this.participantListService.approveParticipant(personID, eventID);
     }
 
 }

@@ -112,10 +112,10 @@ type Mutation {
   createLocation(createLocationInput: CreateLocationInput!): Location!
 
   """регистрация человека на мероприятие"""
-  register(personID: Float!, eventID: Float!): ParticipantList!
+  register(personID: Int!, eventID: Int!): ParticipantList!
 
   """подтверждение участия участника в мероприятии"""
-  approve(input: CreateParticipantListInput!): ParticipantList!
+  approve(personID: Int!, eventID: Int!): ParticipantList!
 
   """создание мероприятия"""
   createEvent(

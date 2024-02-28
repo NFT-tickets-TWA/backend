@@ -12,6 +12,7 @@ import {ParticipantListService} from "../participant-list/participant-list.servi
 @Injectable()
 export class EventService {
     private readonly logger = new Logger(EventService.name)
+
     constructor(private prisma: PrismaService, @Inject(forwardRef(() => ParticipantListService)) private participantListService: ParticipantListService) {
     }
 
@@ -49,6 +50,11 @@ export class EventService {
         const contractResponse = await createInternalEvent(new ContractEvent(createEventInput.name, createEventInput.nftIpfsUrl, this.generateSymbol(), createEventInput.countOfRewardTokens, createEventInput.isSBT));
         if (contractResponse.status == 200) {
             return this.addContractAddress(event.id, contractResponse.address, args).then((newEvent) => {
+                    if (createEventInput.registrationFinishedAt != undefined) {
+                        this.registrationClosed(event.id, createEventInput.registrationFinishedAt)
+                    } else {
+                        this.registrationClosed(event.id, createEventInput.finishedAt)
+                    }
                     return newEvent;
                 }
             ).catch((contractError) => {
@@ -148,7 +154,7 @@ export class EventService {
         );
     }
 
-    updateStatus(eventID: number, newStatus: EventStatus, args: { select: Prisma.EventSelect }) {
+    updateStatus(eventID: number, newStatus: EventStatus, args?: { select: Prisma.EventSelect }) {
         return this.prisma.event.update({
                 where: {
                     id: eventID
@@ -187,5 +193,27 @@ export class EventService {
                 id: id
             }
         })
+    }
+
+    registrationClosed(id: number, dataToCloseRegistration: Date) {
+        setTimeout(
+            () => {
+                this.prisma.event.update({
+                        where: {
+                            id: id
+                        },
+                        data: {
+                            status: EventStatus.REGISTRATION_CLOSED
+                        }
+                    }
+                ).then(()=>  this.logger.log("registration closed on event with id"+id)).catch(
+                    (e)=>{
+                        this.logger.warn("unable to close registration"+e)
+                    }
+                )
+            }
+            ,
+            new Date().getMilliseconds() - dataToCloseRegistration.getMilliseconds())
+
     }
 }

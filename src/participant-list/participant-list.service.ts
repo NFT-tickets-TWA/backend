@@ -14,7 +14,7 @@ export class ParticipantListService {
 
 
     async create(personID: number, eventID: number, selectArgs: { select: Prisma.ParticipantListSelect }) {
-        this.prisma.participantList.create({
+        return this.prisma.participantList.create({
             data: {personID, eventID},
             select: selectArgs.select
         }).then((data)=>{
@@ -22,13 +22,13 @@ export class ParticipantListService {
                 return data;
             });
         }).catch((e)=>{
+            this.logger.warn(e)
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2002') {
-                    this.logger.warn(e)
                     throw "It is likely that the person is already registered"
                 }
             }
-            throw e
+            return e
         });
 
     }
