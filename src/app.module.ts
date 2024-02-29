@@ -1,25 +1,18 @@
 import {Module} from '@nestjs/common';
-
-
-import {PrismaService} from './services/prisma.service';
-import {PersonService} from './services/person.service';
-import {EventService} from './services/event.service';
 import { HttpModule } from "@nestjs/axios";
-
-// import { SubredditService } from './subreddit.service';
-
 import {Prisma} from '@prisma/client'
-import {LocationService} from "./services/location.service";
-import {StatusEventService} from "./services/statusEvent.service";
-import {TypeEventService} from "./services/typeEvent.service";
-import {EventController} from "./controllers/event.controller";
-import {PersonController} from "./controllers/person.controller";
-
-import {LocationController} from "./controllers/location.controller";
-import {TypeController} from "./controllers/type.controller";
-import {StatusController} from "./controllers/status.controller";
-import {ParticipantListController} from "./controllers/participantList.controller";
-import {ParticipantListService} from "./services/participantList.service";
+import {GraphQLModule} from "@nestjs/graphql";
+import {ApolloDriver, ApolloDriverConfig} from "@nestjs/apollo";
+import {PrismaService} from "./prisma/prisma.service";
+import {PrismaModule} from "./prisma/prisma.module";
+import {PersonModule} from "./person/person.module";
+import { StatusModule } from './draft/status/status.module';
+import { TypeModule } from './draft/type/type.module';
+import { RoleModule } from './draft/role/role.module';
+import { LocationModule } from './location/location.module';
+import { ParticipantListModule } from './participant-list/participant-list.module';
+import { EventModule } from './event/event.module';
+import {ApolloServerPluginLandingPageLocalDefault} from "@apollo/server/plugin/landingPage/default";
 
 
 import('@adminjs/prisma').then(({Database, Resource}) => {
@@ -45,6 +38,17 @@ const authenticate = async (email: string, password: string) => {
 
 @Module({
     imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+            driver: ApolloDriver,
+            autoSchemaFile:'schema.gql',
+            path:'/back',
+            playground: false,
+            introspection:true,
+            plugins: [ApolloServerPluginLandingPageLocalDefault()],
+
+
+            // include:[]
+        }),
       import('@adminjs/nestjs').then(({AdminModule}) => AdminModule.createAdminAsync({
 
             useFactory: () => {
@@ -70,25 +74,6 @@ const authenticate = async (email: string, password: string) => {
                             }, {
                                 resource: {model: dm.models[3], client: prisma},
                                 options: {},
-                            },
-                            {
-                                resource: {model: dm.models[4], client: prisma},
-                                options: {},
-                            }, {
-                                resource: {model: dm.models[5], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[6], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[7], client: prisma},
-                                options: {},
-                            },
-                            {
-                                resource: {model: dm.models[8], client: prisma},
-                                options: {},
                             }
                         ],
                     },
@@ -105,9 +90,9 @@ const authenticate = async (email: string, password: string) => {
                 }
             },
         })),
-    HttpModule],
-    controllers: [EventController, PersonController, ParticipantListController, LocationController, TypeController,StatusController],
-    providers: [PrismaService, PersonService, EventService, LocationService, StatusEventService, TypeEventService, ParticipantListService],
+    HttpModule, PersonModule, PrismaModule, StatusModule, TypeModule, RoleModule, LocationModule, ParticipantListModule, EventModule],
+    controllers: [],
+    providers: []
 })
 export class AppModule {
 }

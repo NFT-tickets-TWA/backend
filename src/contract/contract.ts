@@ -1,33 +1,56 @@
-import * as url from "url";
 import * as process from "process";
 
-import {ContractEvent} from '../stractures/stractures';
-import {CustomResponse} from "../stractures/response";
-import {ethers, EventLog} from "ethers";
+import {CustomResponse} from "../util/util";
+import {ethers} from "ethers";
+import fs from "fs";
+
+import {Logger} from "@nestjs/common";
 
 require("dotenv").config();
 
-
-const axios = require("axios");
-
-
-const privKey = process.env.PRIVATE_KEY;
+const privateKey = process.env.PRIVATE_KEY;
 const providerURL = process.env.PROVIDER_URL;
+const contractAddress = process.env.CONTRACT_ADDRESS;
 
-const provider = new ethers.JsonRpcProvider(providerURL);
-const wallet = new ethers.Wallet(privKey, provider);
-const fs = require("fs");
+const provider = new ethers.providers.JsonRpcProvider(providerURL);
+const wallet = new ethers.Wallet(privateKey, provider);
+const parentABI: string = fs.readFileSync(process.env.PARENT_ABI_PATH).toString();
+const childABI: string = fs.readFileSync(process.env.CHILD_ABI_PATH).toString();
+const contract = new ethers.Contract(contractAddress, JSON.parse(parentABI), wallet);
+const logger = new Logger("Contract");
+export class ContractEvent {
+    name: string;
+    nftPattern: string;
+    symbol: string;
+    countOfRewardTokens: number;
+    SBTState: boolean;
+
+    constructor(name: string, url: string, symbol: string, countOfTokens: number, SBTState: boolean) {
+        this.name = name;
+        this.nftPattern = url;
+        this.symbol = symbol;
+        this.countOfRewardTokens = countOfTokens;
+        this.SBTState = SBTState;
+    }
+}
+
+async function listenForEvent(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        contract.on("newEvent", (id, name, addr) => {
+            resolve(addr);
+        })
+        contract.on('error', (error) => {
+            reject(error);
+        });
+    });
+}
 
 export async function createInternalEvent(event: ContractEvent) {
-    const contractAddress = process.env.CONTRACT_ADDRESS;
-    console.log("creating internal event");
+    logger.log("create internal event:start");
     if (event.name == undefined || event.nftPattern == undefined || event.symbol == undefined || event.countOfRewardTokens == undefined || event.SBTState == undefined) {
-        // Return a response to the client
+        logger.warn("create internal event:required data is missing")
         return new CustomResponse(400, "Required data is missing");
     }
-
-    const contents = fs.readFileSync("src/abi/parent.json");
-    const contract = new ethers.Contract(contractAddress, JSON.parse(contents), wallet);
     try {
         const createReceipt = await contract.createInternalEvent(
             event.name,
@@ -37,46 +60,31 @@ export async function createInternalEvent(event: ContractEvent) {
             process.env.TOKEN_ADDRESS,
             event.SBTState
         );
-
-        console.log("request sent");
+        logger.log("create internal event:request to solidity sent");
+        const l = listenForEvent()
         await createReceipt.wait();
-        console.log("response received");
-        // contract.on("newEvent",())
-        let filter = {
-            transactionHash: createReceipt.hash,
-            topics: [
-                ethers.id("newEvent(uint256,string,address,uint256,bool)")
-            ]
-        };
-
-        return provider.getLogs(filter).then(function (logs) {
-            console.log("Printing array of events:");
-            // @ts-ignore
-            let events = logs.map((log) => new ethers.Interface(JSON.parse(contents)).parseLog(log))
-            console.log(events[0]);
-            return new CustomResponse(200, "Internal event created successfully", events[0].args[2]);
-        }).catch((err) => {
-            console.log(err);
-            return new CustomResponse(404, "Error while receiving address of contract");
-        });
-
-
+        logger.log("create internal event:response from solidity received");
+        return l.then((addr) => {
+            logger.log("create internal event: received addr " + addr)
+            return new CustomResponse(200, "created", addr);
+        }).catch((e) => {
+            logger.warn("create internal event: failed to create event: " + e)
+            return new CustomResponse(520, "Failed to created event");
+        })
     } catch (e) {
-        console.error(e);
+        logger.warn("create internal event: failed to create event: " + e)
         return new CustomResponse(520, "Failed to created event");
     }
 }
 
-//newEvent(uint256,string,address,uint256,bool)
 export async function mintNft(walletAddress: string, contractAddress: string, isSbt: boolean) {
-    console.log("minting nft: " + contractAddress);
+    logger.log("minting nft: " + contractAddress);
     if (!walletAddress == undefined || contractAddress == undefined || isSbt == undefined) {
         return new CustomResponse(400, "Required data is missing");
     }
-    const contents = fs.readFileSync("src/abi/child.json");
     try {
-        const contract = new ethers.Contract(contractAddress, JSON.parse(contents), wallet);
-        let createReceipt = undefined;
+        const contract = new ethers.Contract(contractAddress, JSON.parse(childABI), wallet);
+        let createReceipt: { wait: () => any; };
         if (isSbt) {
             createReceipt = await contract.safeMintWithTokens(
                 walletAddress
@@ -86,12 +94,12 @@ export async function mintNft(walletAddress: string, contractAddress: string, is
                 walletAddress
             );
         }
-        console.log("request sent");
+        logger.log("minting nft: request to solidity sent");
         await createReceipt.wait();
-        console.log("response received");
+        logger.log("minting nft: request from solidity sent");
         return new CustomResponse(200, "Nft successfully minted");
     } catch (e) {
-        console.error(e);
+        logger.log("minting nft: Failed to mint nft " + e);
         return new CustomResponse(500, "Failed to mint nft");
     }
 }

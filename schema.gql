@@ -1,0 +1,161 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ParticipantList {
+  id: ID!
+  personID: ID!
+  eventID: ID!
+  status: String!
+}
+
+type Location {
+  id: ID!
+  address: String
+  isOffline: Boolean!
+
+  """ссылка на мероприятие, если оно онлайн"""
+  link: String
+}
+
+type Event {
+  id: ID!
+  name: String!
+
+  """ссылка на обложку"""
+  urlCover: String
+  description: String
+  isSBT: Boolean!
+  creatorID: ID!
+
+  """начало мероприятия"""
+  startedAt: DateTime!
+
+  """конец мероприятия"""
+  finishedAt: DateTime!
+
+  """ссылка на ipfs"""
+  nftIpfsUrl: String!
+
+  """адрес контракта"""
+  contractAddress: String!
+
+  """количество зарегестрированных пользователей"""
+  registeredParticipants: Int!
+  type: String!
+  status: String!
+
+  """ссылка для подтверждения регестрации"""
+  approveLink: String
+  location: Location
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Person {
+  id: ID!
+  tgID: String!
+  role: String!
+  ParticipantList: [ParticipantList!]!
+  events: [Event!]!
+}
+
+type Query {
+  personByID(id: Int!): Person!
+  personByTgID(tgID: String!): Person!
+  statusCollection: [String!]!
+  typeCollection: [String!]!
+  roleCollection: [String!]!
+  locationCollection: [Location!]!
+  locationByID(id: Int!): Location!
+
+  """получение статуса участника на данном мероприятии"""
+  status(input: CreateParticipantListInput!): String!
+
+  """получение мероприятия по его характеристикам"""
+  event(where: EventWhereUniqueInput!): Event
+
+  """получение мероприятий по его характеристикам"""
+  eventCollection(where: EventWhereInput): [Event!]!
+}
+
+input CreateParticipantListInput {
+  personID: Int!
+  eventID: Int!
+}
+
+input EventWhereUniqueInput {
+  id: Int
+  approveLink: String
+}
+
+input EventWhereInput {
+  name: String
+  creator: PersonRelationFilter
+}
+
+input PersonRelationFilter {
+  is: PersonWhereInput
+}
+
+input PersonWhereInput {
+  tgID: String
+}
+
+type Mutation {
+  createPerson(walletAddress: String!, tgID: String!): Person!
+
+  """создание новой локации"""
+  createLocation(createLocationInput: CreateLocationInput!): Location!
+
+  """регистрация человека на мероприятие"""
+  register(personID: Int!, eventID: Int!): ParticipantList!
+
+  """подтверждение участия участника в мероприятии"""
+  approve(personID: Int!, eventID: Int!): ParticipantList!
+
+  """создание мероприятия"""
+  createEvent(
+    input: CreateEventInput!
+
+    """телеграмм id создателя мероприятия"""
+    tgID: String!
+  ): Event!
+
+  """добавление подтверждающей ссылки"""
+  addApproveLink(eventID: Float!, approveLink: String!): Event!
+
+  """mint nft для всех участников мероприятия"""
+  mintNft(eventID: Float!): [ParticipantList!]!
+
+  """mint nft для участника мероприятия"""
+  mintPersonNft(personID: Float!, eventID: Float!): ParticipantList!
+
+  """изменение статуса мероприятия"""
+  updateStatus(eventID: Float!, newStatus: String!): Event!
+}
+
+input CreateLocationInput {
+  address: String
+  isOffline: Boolean!
+  link: String
+}
+
+input CreateEventInput {
+  name: String!
+  type: String = "NOT_STATED"
+  status: String = "REGISTRATION_OPENED"
+  urlCover: String
+  description: String
+  isSBT: Boolean!
+  startedAt: DateTime!
+  finishedAt: DateTime!
+  registrationFinishedAt: DateTime
+  locationID: Int
+  nftIpfsUrl: String!
+  countOfRewardTokens: Int!
+  approveLink: String
+}
